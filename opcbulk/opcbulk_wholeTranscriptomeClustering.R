@@ -38,6 +38,7 @@ bulk_tpm_log_90_filter <- bulk_tpm_log_90[apply(bulk_tpm_log_90,1,function(x) su
 bulk_tpm_log_150_filter <- bulk_tpm_log_150[apply(bulk_tpm_log_150,1,function(x) sum(x > 0) > floor(length(x)/2)),]
 
 
+# Clustering + heatmaps
 plotHeatmap <- function(rsem_tpm_log, info) {
   annotation <- info[,c("genotype","sex")]
   annotation_colors <- list(genotype = c(WT = "#BDBDBD",CKO = "#636363"),sex = c(female = "#41AB5D",male = "#807DBA"))
@@ -65,3 +66,36 @@ phm_90_noOutliers <- plotHeatmap(rsem_tpm_log = bulk_tpm_log_90_filter[,!(names(
 
 phm_150 <- plotHeatmap(rsem_tpm_log = bulk_tpm_log_150_filter,
                        info = bulk.info[bulk.info$day == 150,])
+
+# PCA
+pca_12 <- prcomp(x = t(bulk_tpm_log_12_filter),center = T,scale. = T)
+pca_plot_12 <- ggbiplot(pcobj = pca_12,
+                      labels = names(bulk_tpm_log_12_filter),
+                      var.axes = F,
+                      groups = bulk.info$sex[bulk.info$day == 12]) +
+  scale_color_manual(values=c("#de2d26","#3182bd"))
+pca_plot_12
+
+pca_90 <- prcomp(x = t(bulk_tpm_log_90_filter),center = T,scale. = T)
+pca_plot_90 <- ggbiplot(pcobj = pca_90,
+                        labels = names(bulk_tpm_log_90_filter),
+                        var.axes = F,
+                        groups = bulk.info$sex[bulk.info$day == 90]) +
+  scale_color_manual(values=c("#de2d26","#3182bd"))
+pca_plot_90
+
+pca_90_noOutliers <- prcomp(x = t(bulk_tpm_log_90_filter[,!(names(bulk_tpm_log_90_filter) %in% outliers)]),center = T,scale. = T)
+pca_plot_90_noOutliers <- ggbiplot(pcobj = pca_90_noOutliers,
+                        labels = names(bulk_tpm_log_90_filter[,!(names(bulk_tpm_log_90_filter) %in% outliers)]),
+                        var.axes = F,
+                        groups = bulk.info$sex[bulk.info$day == 90 & !(bulk.info$name %in% outliers)]) +
+  scale_color_manual(values=c("#de2d26","#3182bd"))
+pca_plot_90_noOutliers
+
+pca_150 <- prcomp(x = t(bulk_tpm_log_150_filter),center = T,scale. = T)
+pca_plot_150 <- ggbiplot(pcobj = pca_150,
+                        labels = names(bulk_tpm_log_150_filter),
+                        var.axes = F,
+                        groups = bulk.info$sex[bulk.info$day == 150]) +
+  scale_color_manual(values=c("#de2d26","#3182bd"))
+pca_plot_150
