@@ -37,7 +37,10 @@ source("./ssgsea.GBM.classification/R/runSsGSEAwithPermutationR3.R")
 
 runSsGSEAwithPermutation(profile_data_file = "./ssgsea.GBM.classification/opc12.gct",number_perms = 100)
 
-p_result_sig <- 0+(p_result < 0.05)
+p_opc12 <- read.table("./ssgsea.GBM.classification/p_result_opc12.gct.txt",header = T, row.names = 1)
+p_opc12 <- p_opc12[,4:6]
+p_opc12[,1:3] <- matrix(p.adjust(p = as.vector(as.matrix(p_opc12)),method = "fdr"),nrow = 96,ncol = 3)
+p_opc12 <- p_opc12 < 0.05
 
 phm_annotation <- data.frame(row.names = paste0("opc12.",sprintf("%02d",1:96)),
                              sampleType = opc12.info$type,
@@ -47,9 +50,10 @@ phm_annotation_colors <- list(sampleType = c(pooled = "#e41a1c",`ten-cell` = "#3
                               sex = c(female = "#006d2c",male = "#54278f"),
                               mouseID = c(F8519 = "#99d8c9",F8520 = "#2ca25f",
                                           M8516 = "#bcbddc",M8518 = "#756bb1"))
-pheatmap(1-p_result_sig,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
+pdf(file = "~/subtype_opc12.pdf",width = 4, height = 8)
+pheatmap(1-p_opc12,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
          annotation_colors = phm_annotation_colors,show_rownames = F)
-
+dev.off()
 
 
 
