@@ -1,10 +1,14 @@
 # Subtype opc12
+setwd("/Users/mdsutcliffe/Github/opc_analysis")
 
 library(pheatmap)
 library(RColorBrewer)
 
-source("./functions/tumorSubtyping.R")
+# source("./functions/tumorSubtyping.R")
+source("./functions/collapseIsoforms.R")
 source("./functions/normalizeTPM.R")
+
+load("./temp/speciesConversion.RData")
 
 f.opc12 <- "/Volumes/GoogleDrive/My Drive/Janes Lab/Projects/Mouse glioma/Analysis/data/rsem_opc12.csv"
 f.opc12.info <- "/Volumes/GoogleDrive/My Drive/Janes Lab/Projects/Mouse glioma/Analysis/data/info_opc12.csv"
@@ -12,45 +16,43 @@ f.opc12.info <- "/Volumes/GoogleDrive/My Drive/Janes Lab/Projects/Mouse glioma/A
 opc12 <- read.csv(file = f.opc12,stringsAsFactors = F)
 opc12.info <- read.csv(file = f.opc12.info,stringsAsFactors = F)
 
+conversion <- convertMouseToHuman(opc12$symbol,human,mouse)
+
+opc12$symbol <- conversion$HGNC.symbol[match(opc12$symbol,conversion$MGI.symbol)]
+opc12 <- opc12[complete.cases(opc12),]
+
+opc12 <- collapseIsoforms(opc12,10:ncol(opc12))
+
 opc12_tpm <- normalizeTPM(rsem = opc12,index_counts = 10:ncol(opc12))
-opc12_tpm_log <- opc12_tpm
-row.names(opc12_tpm_log) <- opc12_tpm_log$symbol
-opc12_tpm_log <- log2(opc12_tpm_log[,10:ncol(opc12_tpm_log)] + 1)
-
-opc12_tpm_log_subtype <- opc12_tpm_log[conversion$MGI.symbol,]
-opc12_tpm_log_subtype <- opc12_tpm_log_subtype[complete.cases(opc12_tpm_log_subtype),]
-
-opc12_tpm_log_subtype_pooled <- opc12_tpm_log_subtype[,opc12.info$type == "pooled"]
-
-mouseTumorGenes <- unlist(lapply(tumorSubtype$GeneSymbol,function(x) conversion$MGI.symbol[which(conversion$HGNC.symbol %in% x)]))
-
-
-pheatmap(mat = as.matrix(opc12_tpm_log_subtype_order),
-         color = rev(brewer.pal(11,"RdBu")),
-         cluster_rows = F,
-         scale = "none")
-
-subtypeHM <- tumorSubtype[,2:4]
-row.names(subtypeHM) <- tumorSubtype$GeneSymbol
-pheatmap(mat = as.matrix(subtypeHM),
-         color = rev(brewer.pal(11,"RdBu")),
-         cluster_rows = F,cluster_cols = F)
-plot(ecdf(sort(rank(opc12_tpm_log_subtype_order[1,],ties.method = "min")/ncol(opc12_tpm_log_subtype_order))))
-
-# apply(opc12_tpm_log_subtype_order
-opc12_tpm_10cell <- opc12_tpm[,9+which(opc12.info$type == "ten-cell")]
-row.names(opc12_tpm_10cell) <- opc12_tpm$symbol
-opc12_tpm_10cell_subset <- opc12_tpm_10cell[mouseTumorGenes,]
-opc12_tpm_10cell_subset <- opc12_tpm_10cell_subset[complete.cases(opc12_tpm_10cell_subset),]
-row.names(opc12_tpm_10cell_subset) <- conversion$HGNC.symbol[conversion$MGI.symbol %in% row.names(opc12_tpm_10cell_subset)]
-
 
 opc12_tpm_subtype <- opc12_tpm[,c(3,1,10:ncol(opc12_tpm))]
 names(opc12_tpm_subtype)[1:2] <- c("NAME","Description")
-a <- opc12_tpm_subtype[opc12_tpm_subtype$NAME %in% mouseTumorGenes,]
 
-a$NAME %in% mouseTumorGenes
-conversion$HGNC.symbol[conversion$MGI.symbol %in% a$NAME]
-a$NAME
+write.table(x = "#1.2",file = "./ssgsea.GBM.classification/opc12.gct",quote = F,sep = "\t",row.names = F,col.names = F)
+write.table(x = paste(nrow(opc12_tpm_subtype),ncol(opc12_tpm_subtype)-2,sep = "\t"),file = "./ssgsea.GBM.classification/opc12.gct",quote = F,sep = "\t",append = T,row.names = F,col.names = F)
+write.table(x = opc12_tpm_subtype,file = "./ssgsea.GBM.classification/opc12.gct",quote = F,sep = "\t",row.names = F,append = T)
 
-!duplicated(unlist(lapply(a$NAME,function(x) conversion$HGNC.symbol[which(conversion$MGI.symbol %in% x)])))
+source("./ssgsea.GBM.classification/R/msig.library.12.R")
+source("./ssgsea.GBM.classification/R/runSsGSEAwithPermutationR3.R")
+
+runSsGSEAwithPermutation(profile_data_file = "./ssgsea.GBM.classification/opc12.gct",number_perms = 100)
+
+p_result_sig <- 0+(p_result < 0.05)
+
+phm_annotation <- data.frame(row.names = paste0("opc12.",sprintf("%02d",1:96)),
+                             sampleType = opc12.info$type,
+                             sex = opc12.info$sex,
+                             mouseID = opc12.info$mouse)
+phm_annotation_colors <- list(sampleType = c(pooled = "#e41a1c",`ten-cell` = "#377eb8"),
+                              sex = c(female = "#006d2c",male = "#54278f"),
+                              mouseID = c(F8519 = "#99d8c9",F8520 = "#2ca25f",
+                                          M8516 = "#bcbddc",M8518 = "#756bb1"))
+pheatmap(1-p_result_sig,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
+         annotation_colors = phm_annotation_colors,show_rownames = F)
+
+
+
+
+
+
+

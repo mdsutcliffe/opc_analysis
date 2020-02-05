@@ -22,5 +22,5 @@ convertMouseToHuman <- function(geneList,human,mouse) {
   return(conversion)
   
 }
-  
-conversion <- convertHumanToMouse(geneList = tumorSubtype$GeneSymbol)
+
+save.image(file = "./temp/speciesConversion.RData")
