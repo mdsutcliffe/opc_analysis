@@ -39,20 +39,20 @@ runSsGSEAwithPermutation(profile_data_file = "./ssgsea.GBM.classification/opc90.
 
 p_opc90 <- read.table("./ssgsea.GBM.classification/p_result_opc90.gct.txt",header = T, row.names = 1)
 p_opc90 <- p_opc90[,4:6]
-p_opc90[,1:3] <- matrix(p.adjust(p = as.vector(as.matrix(p_opc90)),method = "fdr"),nrow = 96,ncol = 3)
+# p_opc90[,1:3] <- matrix(p.adjust(p = as.vector(as.matrix(p_opc90)),method = "fdr"),nrow = 96,ncol = 3)
 p_opc90 <- p_opc90 < 0.05
 
-phm_annotation <- data.frame(row.names = paste0("opc90.",sprintf("%02d",1:96)),
+phm_annotation <- data.frame(row.names = c(paste0("control.",sprintf("%02d",1:40)),paste0("sample.",sprintf("%02d",1:56))),
                              sampleType = opc90.info$type,
                              sex = opc90.info$sex,
                              mouseID = opc90.info$mouse)
 phm_annotation_colors <- list(sampleType = c(pooled = "#e41a1c",`ten-cell` = "#377eb8"),
                               sex = c(female = "#006d2c",male = "#54278f"),
-                              mouseID = c(F8519 = "#99d8c9",F8520 = "#2ca25f",
-                                          M8516 = "#bcbddc",M8518 = "#756bb1"))
+                              mouseID = c(F7460 = "#99d8c9",F6340 = "#2ca25f",
+                                          M8170_1 = "#bcbddc",M8170_2 = "#756bb1"))
 pdf(file = "~/subtype_opc90.pdf",width = 4, height = 8)
 pheatmap(1-p_opc90,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
-         annotation_colors = phm_annotation_colors,show_rownames = F)
+         annotation_colors = phm_annotation_colors,show_rownames = F,cluster_rows = F,cluster_cols = F)
 dev.off()
 
 

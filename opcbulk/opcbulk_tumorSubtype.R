@@ -84,7 +84,8 @@ bulk_collapse_tpm_subtype <- bulk_collapse_tpm[,c(3,1,10:ncol(bulk_collapse_tpm)
 names(bulk_collapse_tpm_subtype)[1:2] <- c("NAME","Description")
 
 write.table(x = "#1.2",file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",row.names = F,col.names = F)
-write.table(x = paste(nrow(bulk_collapse_tpm_subtype),ncol(bulk_collapse_tpm_subtype)-2,sep = "\t"),file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",append = T,row.names = F,col.names = F)
+write.table(x = paste(nrow(bulk_collapse_tpm_subtype),ncol(bulk_collapse_tpm_subtype)-2,sep = "\t"),
+            file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",append = T,row.names = F,col.names = F)
 write.table(x = bulk_collapse_tpm_subtype,file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",row.names = F,append = T)
 
 
@@ -103,6 +104,7 @@ phm_annotation <- data.frame(row.names = bulk_collapse.info$name,
 
 phm_annotation_colors <- list(genotype = c(WT = "#e41a1c",CKO = "#377eb8"),
                               sex = c(female = "#006d2c",male = "#54278f"))
+
 pdf(file = "~/subtype_bulk150.pdf",width = 4,height = 6)
 pheatmap(1-p_opcBulk_tumor,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
          annotation_colors = phm_annotation_colors,show_rownames = F,main = "150 dpi",cluster_cols = F,cluster_rows = F)
@@ -119,6 +121,64 @@ pdf(file = "~/subtype_bulk12.pdf",width = 4,height = 6)
 pheatmap(1-p_opcBulk_12,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
          annotation_colors = phm_annotation_colors,show_rownames = F,main = "12 dpi",cluster_cols = F,cluster_rows = F)
 dev.off()
+
+conversion_subtype <- convertHumanToMouse(tumorSubtype$GeneSymbol,human,mouse)
+
+bulk_collapse_tpm_subtype_genes <- bulk_collapse_tpm_subtype[match(tumorSubtype$GeneSymbol,bulk_collapse_tpm_subtype$NAME),]
+bulk_collapse_tpm_subtype_genes <- bulk_collapse_tpm_subtype_genes[complete.cases(bulk_collapse_tpm_subtype_genes),]
+row.names(bulk_collapse_tpm_subtype_genes) <- bulk_collapse_tpm_subtype_genes$NAME
+bulk_collapse_tpm_subtype_genes <- bulk_collapse_tpm_subtype_genes[,3:ncol(bulk_collapse_tpm_subtype_genes)]
+
+
+pdf(file = "plots/subtype_bulk_CKO_scaled.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),
+                                                       which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),
+                                                       which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         scale = "row",cluster_rows = F,cluster_cols = F,color = rev(brewer.pal(11,"RdBu")),gaps_col = rep(c(49,93),each=4),gaps_row = c(7,14))
+dev.off()
+
+pdf(file = "plots/subtype_bulk_WT_scaled.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"))] + 1)),
+         scale = "row",cluster_rows = F,cluster_cols = F,color = rev(brewer.pal(11,"RdBu")),gaps_col = rep(c(49,93),each=4),gaps_row = c(5,9))
+dev.off()
+
+pdf(file = "plots/subtype_bulk_CKO.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         cluster_rows = F,cluster_cols = F,color = brewer.pal(9,"Reds"),gaps_col = rep(c(49,93),each=4),gaps_row = c(7,14))
+dev.off()
+
+pdf(file = "plots/subtype_bulk_WT.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"))] + 1)),
+         cluster_rows = F,cluster_cols = F,color = brewer.pal(9,"Reds"),gaps_col = rep(c(49,93),each=4),gaps_row = c(5,9))
+dev.off()
+
+pdf(file = "plots/subtype_bulk.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         cluster_rows = F,cluster_cols = F,color = brewer.pal(9,"Reds"),gaps_col = rep(c(49,93),each=4),gaps_row = c(5,12,16,23,29))
+dev.off()
+
+pdf(file = "plots/subtype_bulk_scaled.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         scale = "row",cluster_rows = F,cluster_cols = F,color = rev(brewer.pal(11,"RdBu")),gaps_col = rep(c(49,93),each=4),gaps_row = c(5,12,16,23,29))
+dev.off()
+
+
 
 
 

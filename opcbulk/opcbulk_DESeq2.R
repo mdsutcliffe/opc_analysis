@@ -116,7 +116,8 @@ runDESeq2 <- function(rsem,info,day,design) {
   return(list("design" = design,
               "modelMatrix" = modelMatrix,
               "genesDE" = genesDE,
-              "results" = resOrdered))
+              "results" = resOrdered,
+              "dds" = dds))
 }
 
 design <- formula(~ genotype * sex)
@@ -153,8 +154,6 @@ res_plus_12 <- runDESeq2(rsem = bulk_collapse,info = bulk_collapse.info,day = 12
 res_plus_90 <- runDESeq2(rsem = bulk_collapse,info = bulk_collapse.info,day = 90,design = design)
 res_plus_150 <- runDESeq2(rsem = bulk_collapse,info = bulk_collapse.info,day = 150,design = design)
 
-
 plotHeatmap(bulk_collapse_tpm_log[res_plus_12$genesDE,bulk_collapse.info$day == 12],bulk_collapse.info)
 plotHeatmap(bulk_collapse_tpm_log[res_plus_90$genesDE,bulk_collapse.info$day == 90],bulk_collapse.info)
 plotHeatmap(bulk_collapse_tpm_log[res_plus_150$genesDE,bulk_collapse.info$day == 150],bulk_collapse.info)
-
