@@ -83,44 +83,44 @@ bulk_collapse_tpm <- normalizeTPM(rsem = bulk_collapse,index_counts = 10:ncol(bu
 bulk_collapse_tpm_subtype <- bulk_collapse_tpm[,c(3,1,10:ncol(bulk_collapse_tpm))]
 names(bulk_collapse_tpm_subtype)[1:2] <- c("NAME","Description")
 
-write.table(x = "#1.2",file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",row.names = F,col.names = F)
-write.table(x = paste(nrow(bulk_collapse_tpm_subtype),ncol(bulk_collapse_tpm_subtype)-2,sep = "\t"),
-            file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",append = T,row.names = F,col.names = F)
-write.table(x = bulk_collapse_tpm_subtype,file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",row.names = F,append = T)
-
-
-source("./ssgsea.GBM.classification/R/msig.library.12.R")
-source("./ssgsea.GBM.classification/R/runSsGSEAwithPermutationR3.R")
-
-runSsGSEAwithPermutation(profile_data_file = "./ssgsea.GBM.classification/opcBulk.gct",number_perms = 100)
-
-p_opcBulk <- read.table("./ssgsea.GBM.classification/p_result_opcBulk.gct.txt",header = T, row.names = 1)
-
-p_opcBulk_tumor <- p_opcBulk[bulk_collapse.info$day == 150,4:6] < 0.05
-
-phm_annotation <- data.frame(row.names = bulk_collapse.info$name,
-                             genotype = bulk_collapse.info$genotype,
-                             sex = bulk_collapse.info$sex)
-
-phm_annotation_colors <- list(genotype = c(WT = "#e41a1c",CKO = "#377eb8"),
-                              sex = c(female = "#006d2c",male = "#54278f"))
-
-pdf(file = "~/subtype_bulk150.pdf",width = 4,height = 6)
-pheatmap(1-p_opcBulk_tumor,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
-         annotation_colors = phm_annotation_colors,show_rownames = F,main = "150 dpi",cluster_cols = F,cluster_rows = F)
-dev.off()
-
-p_opcBulk_90 <- p_opcBulk[bulk_collapse.info$day == 90,4:6] < 0.05
-pdf(file = "~/subtype_bulk90.pdf",width = 4,height = 6)
-pheatmap(1-p_opcBulk_90,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
-         annotation_colors = phm_annotation_colors,show_rownames = F,main = "90 dpi",cluster_cols = F,cluster_rows = F)
-dev.off()
-p_opcBulk_12 <- p_opcBulk[bulk_collapse.info$day == 12,4:6] < 0.05
-
-pdf(file = "~/subtype_bulk12.pdf",width = 4,height = 6)
-pheatmap(1-p_opcBulk_12,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
-         annotation_colors = phm_annotation_colors,show_rownames = F,main = "12 dpi",cluster_cols = F,cluster_rows = F)
-dev.off()
+# write.table(x = "#1.2",file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",row.names = F,col.names = F)
+# write.table(x = paste(nrow(bulk_collapse_tpm_subtype),ncol(bulk_collapse_tpm_subtype)-2,sep = "\t"),
+#             file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",append = T,row.names = F,col.names = F)
+# write.table(x = bulk_collapse_tpm_subtype,file = "./ssgsea.GBM.classification/opcBulk.gct",quote = F,sep = "\t",row.names = F,append = T)
+# 
+# 
+# source("./ssgsea.GBM.classification/R/msig.library.12.R")
+# source("./ssgsea.GBM.classification/R/runSsGSEAwithPermutationR3.R")
+# 
+# runSsGSEAwithPermutation(profile_data_file = "./ssgsea.GBM.classification/opcBulk.gct",number_perms = 100)
+# 
+# p_opcBulk <- read.table("./ssgsea.GBM.classification/p_result_opcBulk.gct.txt",header = T, row.names = 1)
+# 
+# p_opcBulk_tumor <- p_opcBulk[bulk_collapse.info$day == 150,4:6] < 0.05
+# 
+# phm_annotation <- data.frame(row.names = bulk_collapse.info$name,
+#                              genotype = bulk_collapse.info$genotype,
+#                              sex = bulk_collapse.info$sex)
+# 
+# phm_annotation_colors <- list(genotype = c(WT = "#e41a1c",CKO = "#377eb8"),
+#                               sex = c(female = "#006d2c",male = "#54278f"))
+# 
+# pdf(file = "~/subtype_bulk150.pdf",width = 4,height = 6)
+# pheatmap(1-p_opcBulk_tumor,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
+#          annotation_colors = phm_annotation_colors,show_rownames = F,main = "150 dpi",cluster_cols = F,cluster_rows = F)
+# dev.off()
+# 
+# p_opcBulk_90 <- p_opcBulk[bulk_collapse.info$day == 90,4:6] < 0.05
+# pdf(file = "~/subtype_bulk90.pdf",width = 4,height = 6)
+# pheatmap(1-p_opcBulk_90,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
+#          annotation_colors = phm_annotation_colors,show_rownames = F,main = "90 dpi",cluster_cols = F,cluster_rows = F)
+# dev.off()
+# p_opcBulk_12 <- p_opcBulk[bulk_collapse.info$day == 12,4:6] < 0.05
+# 
+# pdf(file = "~/subtype_bulk12.pdf",width = 4,height = 6)
+# pheatmap(1-p_opcBulk_12,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotation_row = phm_annotation,
+#          annotation_colors = phm_annotation_colors,show_rownames = F,main = "12 dpi",cluster_cols = F,cluster_rows = F)
+# dev.off()
 
 conversion_subtype <- convertHumanToMouse(tumorSubtype$GeneSymbol,human,mouse)
 
@@ -129,6 +129,7 @@ bulk_collapse_tpm_subtype_genes <- bulk_collapse_tpm_subtype_genes[complete.case
 row.names(bulk_collapse_tpm_subtype_genes) <- bulk_collapse_tpm_subtype_genes$NAME
 bulk_collapse_tpm_subtype_genes <- bulk_collapse_tpm_subtype_genes[,3:ncol(bulk_collapse_tpm_subtype_genes)]
 
+annotation <- data.frame(row.names = bulk_collapse.info$name,genotype = bulk_collapse.info$genotype)
 
 pdf(file = "plots/subtype_bulk_CKO_scaled.pdf",width = 20,height = 12)
 pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),
@@ -178,14 +179,62 @@ pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.inf
          scale = "row",cluster_rows = F,cluster_cols = F,color = rev(brewer.pal(11,"RdBu")),gaps_col = rep(c(49,93),each=4),gaps_row = c(5,12,16,23,29))
 dev.off()
 
+pdf(file = "plots/subtype_bulk_tumor.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         cluster_rows = F,cluster_cols = F,show_rownames = F,
+         color = brewer.pal(9,"Greys"),gaps_col = rep(c(49,93),each=4),gaps_row = 6,
+         annotation_row = annotation,annotation_colors = list(genotype = c(WT = "#31a354",CKO = "#756bb1")))
+dev.off()
 
+pdf(file = "plots/subtype_bulk_tumor_scaled.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_genes[,c(which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         scale = "row",cluster_rows = F,show_rownames = F,cluster_cols = F,color = rev(brewer.pal(11,"RdBu")),gaps_col = rep(c(49,93),each=4),gaps_row = 6,
+         annotation_row = annotation,annotation_colors = list(genotype = c(WT = "#31a354",CKO = "#756bb1")))
+dev.off()
 
+pGSCsig <- c("PDGFRA","OLIG2","SOX10","ASCL1","DLL3","BCAN")
+mGSCsig <- c("PTGDS","CD99","FN1","EGFR","VIM","CHI3L1","CD44")
+pGSCsig_nuclear <- c("OLIG2","HES6","BCAN","DLL3","OLIG1","SOX10")
+mGSCsig_nuclear <- c("TNC","CHI3L1","CD44","CHL1","MEG3","GFAP")
 
+GSC_sigGenes <- c(unique(c(pGSCsig,pGSCsig_nuclear)),unique(c(mGSCsig,mGSCsig_nuclear)))
+bulk_collapse_tpm_subtype_GSC <- bulk_collapse_tpm_subtype[match(GSC_sigGenes,bulk_collapse_tpm_subtype$NAME),]
+bulk_collapse_tpm_subtype_GSC <- bulk_collapse_tpm_subtype_GSC[complete.cases(bulk_collapse_tpm_subtype_GSC),]
+row.names(bulk_collapse_tpm_subtype_GSC) <- bulk_collapse_tpm_subtype_GSC$NAME
+bulk_collapse_tpm_subtype_GSC <- bulk_collapse_tpm_subtype_GSC[,3:ncol(bulk_collapse_tpm_subtype_GSC)]
 
+pdf(file = "plots/gscSig_bulk_CKO_scaled.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_GSC[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         scale = "row",cluster_rows = F,cluster_cols = F,color = rev(brewer.pal(11,"RdBu")),gaps_col = rep(length(unique(c(pGSCsig,pGSCsig_nuclear))),each=4),gaps_row = c(7,14))
+dev.off()
 
+pdf(file = "plots/gscSig_bulk_CKO.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_GSC[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),
+                                                       which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),
+                                                       which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         cluster_rows = F,cluster_cols = F,color = brewer.pal(9,"Greys"),gaps_col = rep(length(unique(c(pGSCsig,pGSCsig_nuclear))),each=4),gaps_row = c(7,14))
+dev.off()
 
+pdf(file = "plots/gscSig_bulk.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_GSC[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         cluster_rows = F,cluster_cols = F,color = brewer.pal(9,"Greys"),gaps_col = rep(length(unique(c(pGSCsig,pGSCsig_nuclear))),each=4),gaps_row = c(5,12,16,23,29))
+dev.off()
 
-
-
-
-
+pdf(file = "plots/gscSig_bulk_scaled.pdf",width = 20,height = 12)
+pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_GSC[,c(which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),
+                                                         which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
+         scale = "row",cluster_rows = F,cluster_cols = F,color = rev(brewer.pal(11,"RdBu")),gaps_col = rep(length(unique(c(pGSCsig,pGSCsig_nuclear))),each=4),gaps_row = c(5,12,16,23,29))
+dev.off()
