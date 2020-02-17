@@ -4,6 +4,7 @@ library(pheatmap)
 library(RColorBrewer)
 library(ggbiplot)
 library(DESeq2)
+library(hypeR)
 
 source("./functions/normalizeTPM.R")
 
@@ -157,3 +158,42 @@ res_plus_150 <- runDESeq2(rsem = bulk_collapse,info = bulk_collapse.info,day = 1
 plotHeatmap(bulk_collapse_tpm_log[res_plus_12$genesDE,bulk_collapse.info$day == 12],bulk_collapse.info)
 plotHeatmap(bulk_collapse_tpm_log[res_plus_90$genesDE,bulk_collapse.info$day == 90],bulk_collapse.info)
 plotHeatmap(bulk_collapse_tpm_log[res_plus_150$genesDE,bulk_collapse.info$day == 150],bulk_collapse.info)
+
+
+# Enrichment
+
+msigdb_path <- msigdb_download_all(species = "Mus musculus",output_dir = "./temp")
+hallmark <- msigdb_fetch(msigdb_path = msigdb_path,symbol = "H")
+
+bulk_150_up <- hypeR(signature = row.names(res_plus_150$results[res_plus_150$results$log2FoldChange > 0 & !is.na(res_plus_150$results$padj) & res_plus_150$results$padj < 0.05,]),gsets = hallmark,fdr_cutoff = 0.01,do_plots = T)
+pdf("./plots/enrichment_bulk_150_up.pdf",width = 8,height = 5)
+hyp_dots(bulk_150_up,top = 100)
+dev.off()
+
+bulk_150_down <- hypeR(signature = row.names(res_plus_150$results[res_plus_150$results$log2FoldChange < 0 & !is.na(res_plus_150$results$padj) & res_plus_150$results$padj < 0.05,]),gsets = hallmark,fdr_cutoff = 0.05,do_plots = T)
+pdf("./plots/enrichment_bulk_150_down.pdf",width = 8,height = 5)
+hyp_dots(bulk_150_down,top = 100)
+dev.off()
+
+
+# Volcano plot
+fc <- res_plus_150$results$log2FoldChange[!is.na(res_plus_150$results$pvalue) & res_plus_150$results$padj >= 0.05]
+p <- res_plus_150$results$pvalue[!is.na(res_plus_150$results$pvalue) & res_plus_150$results$padj >= 0.05]
+
+fc_up <- res_plus_150$results$log2FoldChange[!is.na(res_plus_150$results$pvalue) & res_plus_150$results$padj < 0.05 & res_plus_150$results$log2FoldChange > 0]
+p_up <- res_plus_150$results$pvalue[!is.na(res_plus_150$results$pvalue) & res_plus_150$results$padj < 0.05 & res_plus_150$results$log2FoldChange > 0]
+
+fc_down <- res_plus_150$results$log2FoldChange[!is.na(res_plus_150$results$pvalue) & res_plus_150$results$padj < 0.05 & res_plus_150$results$log2FoldChange < 0]
+p_down <- res_plus_150$results$pvalue[!is.na(res_plus_150$results$pvalue) & res_plus_150$results$padj < 0.05 & res_plus_150$results$log2FoldChange < 0]
+
+plot(fc,-log(p,base = 10),
+     xlim = c(-10,10),
+     ylim = c(0,100),
+     xlab = expression("Log"[2]*" fold change"),
+     ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
+     las = 1,frame = F)
+points(fc_up,-log(p_up,base = 10),col = "#de2d26")
+points(fc_down,-log(p_down,base = 10),col = "#3182bd")
+legend(x = "topright",)
+
+# plotCounts(dds = res_plus_150$dds,gene = "Pbx3",intgroup = "genotype")
