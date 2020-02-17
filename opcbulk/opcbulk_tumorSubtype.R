@@ -238,3 +238,109 @@ pheatmap(mat = t(log2(bulk_collapse_tpm_subtype_GSC[,c(which(bulk_collapse.info$
                                                          which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"))] + 1)),
          scale = "row",cluster_rows = F,cluster_cols = F,color = rev(brewer.pal(11,"RdBu")),gaps_col = rep(length(unique(c(pGSCsig,pGSCsig_nuclear))),each=4),gaps_row = c(5,12,16,23,29))
 dev.off()
+
+
+# Using full PC loadings
+bulk_collapse_tpm_gsc <- bulk_collapse_tpm
+bulk_collapse_tpm_gsc[,10:ncol(bulk_collapse_tpm_gsc)] <- log2(x = bulk_collapse_tpm_gsc[,10:ncol(bulk_collapse_tpm_gsc)]/100 + 1)
+
+pc <- read.csv("./temp/219026_2_supp_5782669_py1bdv.csv")[,1:3]
+pc$PC1 <- pc$PC1 / sqrt(sum(pc$PC1^2))
+pc$PC2 <- pc$PC1 / sqrt(sum(pc$PC2^2))
+sum(pc$Gene %in% bulk_collapse_tpm_gsc$symbol)
+bulk_collapse_tpm_gsc <- bulk_collapse_tpm_gsc[match(pc$Gene,bulk_collapse_tpm_gsc$symbol),]
+
+pc1_bulk150 <- sapply(9+which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+pc2_bulk150 <- sapply(9+which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+
+pc1_bulk150_WT <- sapply(9+which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+pc2_bulk150_WT <- sapply(9+which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+
+
+pc1_bulk12 <- sapply(9+which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+pc2_bulk12 <- sapply(9+which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+
+pc1_bulk12_WT <- sapply(9+which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+pc2_bulk12_WT <- sapply(9+which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+
+
+pc1_bulk90 <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+pc2_bulk90 <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+
+pc1_bulk90_WT <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+pc2_bulk90_WT <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+
+
+png("./plots/pc_bulk150.png",width = 1200,height = 1000,res = 250)
+par(mar=c(4.1,4.1,1,0.5))
+plot(pc1_bulk150,pc2_bulk150,xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "150 dpi",pch = 16)
+points(pc1_bulk150_WT,pc2_bulk150_WT)
+legend("topright",legend = c("WT","CKO (tumor)"),pch=c(1,16))
+dev.off()
+
+png("./plots/pc_bulk12.png",width = 1200,height = 1000,res = 250)
+par(mar=c(4.1,4.1,1,0.5))
+plot(pc1_bulk12,pc2_bulk12,xlim = c(-60,60),ylim = c(0,140),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "12 dpi",pch = 16)
+points(pc1_bulk12_WT,pc2_bulk12_WT)
+legend("topright",legend = c("WT","CKO"),pch=c(1,16))
+dev.off()
+
+png("./plots/pc_bulk90.png",width = 1200,height = 1000,res = 250)
+par(mar=c(4.1,4.1,1,0.5))
+plot(pc1_bulk90,pc2_bulk90,xlim = c(-60,60),ylim = c(0,140),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "90 dpi",pch = 16)
+points(pc1_bulk90_WT,pc2_bulk90_WT)
+legend("topright",legend = c("WT","CKO"),pch=c(1,16))
+dev.off()
+
+# Using full PC loadings - log10
+{
+  bulk_collapse_tpm_gsc <- bulk_collapse_tpm
+  bulk_collapse_tpm_gsc[,10:ncol(bulk_collapse_tpm_gsc)] <- log10(x = bulk_collapse_tpm_gsc[,10:ncol(bulk_collapse_tpm_gsc)]/100 + 1)
+  
+  pc <- read.csv("./temp/219026_2_supp_5782669_py1bdv.csv")[,1:3]
+
+  sum(pc$Gene %in% bulk_collapse_tpm_gsc$symbol)
+  bulk_collapse_tpm_gsc <- bulk_collapse_tpm_gsc[match(pc$Gene,bulk_collapse_tpm_gsc$symbol),]
+  
+  pc1_bulk150 <- sapply(9+which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+  pc2_bulk150 <- sapply(9+which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+  
+  pc1_bulk150_WT <- sapply(9+which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+  pc2_bulk150_WT <- sapply(9+which(bulk_collapse.info$day == 150 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+  
+  
+  pc1_bulk12 <- sapply(9+which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+  pc2_bulk12 <- sapply(9+which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+  
+  pc1_bulk12_WT <- sapply(9+which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+  pc2_bulk12_WT <- sapply(9+which(bulk_collapse.info$day == 12 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+  
+  
+  pc1_bulk90 <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+  pc2_bulk90 <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "CKO"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+  
+  pc1_bulk90_WT <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC1 * bulk_collapse_tpm_gsc[,x],na.rm = T))
+  pc2_bulk90_WT <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
+  
+  
+  png("./plots/pc_bulk150_log10.png",width = 1200,height = 1000,res = 250)
+  par(mar=c(4.1,4.1,1,0.5))
+  plot(pc1_bulk150,pc2_bulk150,xlim = c(-30,30),ylim = c(0,50),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "150 dpi - Log10",pch = 16)
+  points(pc1_bulk150_WT,pc2_bulk150_WT)
+  legend("topright",legend = c("WT","CKO (tumor)"),pch=c(1,16))
+  dev.off()
+  
+  png("./plots/pc_bulk12_log10.png",width = 1200,height = 1000,res = 250)
+  par(mar=c(4.1,4.1,1,0.5))
+  plot(pc1_bulk12,pc2_bulk12,xlim = c(-30,30),ylim = c(0,50),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "12 dpi - Log10",pch = 16)
+  points(pc1_bulk12_WT,pc2_bulk12_WT)
+  legend("topright",legend = c("WT","CKO"),pch=c(1,16))
+  dev.off()
+  
+  png("./plots/pc_bulk90_log10.png",width = 1200,height = 1000,res = 250)
+  par(mar=c(4.1,4.1,1,0.5))
+  plot(pc1_bulk90,pc2_bulk90,xlim = c(-30,30),ylim = c(0,50),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "90 dpi - Log10",pch = 16)
+  points(pc1_bulk90_WT,pc2_bulk90_WT)
+  legend("topright",legend = c("WT","CKO"),pch=c(1,16))
+  dev.off()
+}

@@ -145,9 +145,9 @@ plotHeatmap <- function(rsem_tpm_log, info) {
 }
 
 
-plotHeatmap(bulk_collapse_tpm_log[res_12$genesDE,bulk_collapse.info$day == 12],bulk_collapse.info)
-plotHeatmap(bulk_collapse_tpm_log[res_90$genesDE,bulk_collapse.info$day == 90],bulk_collapse.info)
-plotHeatmap(bulk_collapse_tpm_log[res_150$genesDE,bulk_collapse.info$day == 150],bulk_collapse.info)
+# plotHeatmap(bulk_collapse_tpm_log[res_12$genesDE,bulk_collapse.info$day == 12],bulk_collapse.info)
+# plotHeatmap(bulk_collapse_tpm_log[res_90$genesDE,bulk_collapse.info$day == 90],bulk_collapse.info)
+# plotHeatmap(bulk_collapse_tpm_log[res_150$genesDE,bulk_collapse.info$day == 150],bulk_collapse.info)
 
 
 design <- formula(~ genotype + sex)
@@ -155,9 +155,9 @@ res_plus_12 <- runDESeq2(rsem = bulk_collapse,info = bulk_collapse.info,day = 12
 res_plus_90 <- runDESeq2(rsem = bulk_collapse,info = bulk_collapse.info,day = 90,design = design)
 res_plus_150 <- runDESeq2(rsem = bulk_collapse,info = bulk_collapse.info,day = 150,design = design)
 
-plotHeatmap(bulk_collapse_tpm_log[res_plus_12$genesDE,bulk_collapse.info$day == 12],bulk_collapse.info)
-plotHeatmap(bulk_collapse_tpm_log[res_plus_90$genesDE,bulk_collapse.info$day == 90],bulk_collapse.info)
-plotHeatmap(bulk_collapse_tpm_log[res_plus_150$genesDE,bulk_collapse.info$day == 150],bulk_collapse.info)
+# plotHeatmap(bulk_collapse_tpm_log[res_plus_12$genesDE,bulk_collapse.info$day == 12],bulk_collapse.info)
+# plotHeatmap(bulk_collapse_tpm_log[res_plus_90$genesDE,bulk_collapse.info$day == 90],bulk_collapse.info)
+# plotHeatmap(bulk_collapse_tpm_log[res_plus_150$genesDE,bulk_collapse.info$day == 150],bulk_collapse.info)
 
 
 # Enrichment
@@ -175,8 +175,15 @@ pdf("./plots/enrichment_bulk_150_down.pdf",width = 8,height = 5)
 hyp_dots(bulk_150_down,top = 100)
 dev.off()
 
-geneTable <- res_plus_150$results[,c("log2FoldChange","pvalue","padj")]
-write.csv(x = geneTable,file = "./temp/bulk150_genes.csv",quote = F)
+
+geneTable150 <- res_plus_150$results[,c("log2FoldChange","pvalue","padj")]
+write.csv(x = geneTable150,file = "./temp/bulk150_genes.csv",quote = F)
+
+geneTable12 <- res_plus_12$results[,c("log2FoldChange","pvalue","padj")]
+write.csv(x = geneTable12,file = "./temp/bulk12_genes.csv",quote = F)
+
+geneTable90 <- res_plus_90$results[,c("log2FoldChange","pvalue","padj")]
+write.csv(x = geneTable90,file = "./temp/bulk90_genes.csv",quote = F)
 
 
 # Volcano plot

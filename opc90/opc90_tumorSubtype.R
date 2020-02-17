@@ -56,6 +56,27 @@ pheatmap(1-p_opc90,color = c("#000000","#FFFFFF"),breaks = c(0,0.05,1),annotatio
 dev.off()
 
 
+opc90_tpm_gsc <- opc90_tpm
+opc90_tpm_gsc[,10:ncol(opc90_tpm_gsc)] <- log2(x = opc90_tpm_gsc[,10:ncol(opc90_tpm_gsc)]/100 + 1)
+
+pc <- read.csv("./temp/219026_2_supp_5782669_py1bdv.csv")[,1:3]
+sum(pc$Gene %in% opc90_tpm_gsc$symbol)
+opc90_tpm_gsc <- opc90_tpm_gsc[match(pc$Gene,opc12_tpm_gsc$symbol),]
+
+pc1_opc90 <- sapply(9+which(opc90.info$type == "ten-cell"),function(x) sum(pc$PC1 * opc90_tpm_gsc[,x],na.rm = T))
+pc2_opc90 <- sapply(9+which(opc90.info$type == "ten-cell"),function(x) sum(pc$PC2 * opc90_tpm_gsc[,x],na.rm = T))
+
+pc1_opc90_control <- sapply(9+which(opc90.info$type == "pooled"),function(x) sum(pc$PC1 * opc90_tpm_gsc[,x],na.rm = T))
+pc2_opc90_control <- sapply(9+which(opc90.info$type == "pooled"),function(x) sum(pc$PC2 * opc90_tpm_gsc[,x],na.rm = T))
+
+
+png("./plots/pc_opc12.png",width = 1200,height = 1000,res = 250)
+par(mar=c(4.1,4.1,1,0.5))
+plot(pc1_opc12,pc2_opc12,xlim = c(-60,60),ylim = c(0,120),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "90 dpi 10cRNA-seq",pch = 16)
+points(pc1_opc12_control,pc2_opc12_control)
+legend("topright",legend = c("split-pool","ten-cell"),pch=c(1,16))
+dev.off()
+
 
 
 
