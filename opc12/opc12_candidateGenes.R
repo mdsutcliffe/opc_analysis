@@ -19,7 +19,7 @@ opc12M_candidates_table <- table(unlist(opc12M_candidates))
 opc12F_candidates_table_filter <- names(opc12F_candidates_table)[opc12F_candidates_table >= 75]
 opc12M_candidates_table_filter <- names(opc12M_candidates_table)[opc12M_candidates_table >= 75]
 opc12_sexIndependentCandidates <- intersect(opc12F_candidates_table_filter,opc12M_candidates_table_filter)
-
+length(opc12_sexIndependentCandidates)
 
 
 opc12 <- read.csv(file = paste0(opc12.path,"/rsem_opc12.csv"),stringsAsFactors = F)
@@ -141,3 +141,16 @@ axis(1,at = c(1,9139))
 axis(2,at = 0:6,las = 1)
 legend(x = "topright",legend = c("split-pool controls","ten-cell samples","RHEGs"),col = c("#44444444","#fc927244","#de2d26"),pch=c(16,16,21),)
 dev.off()
+
+f <- vector()
+m <- vector()
+{
+  for (i in 1:100) {
+    x <- read.table(paste0(opc12F.path,"/resample_",sprintf("%03d",i),".tsv"),header = T,sep = "\t",quote = "")
+    f <- c(f,as.character(x$symbol))
+    x <- read.table(paste0(opc12M.path,"/resample_",sprintf("%03d",i),".tsv"),header = T,sep = "\t",quote = "")
+    m <- c(m,as.character(x$symbol))
+  }
+}
+
+intersect(names(table(f))[as.numeric(table(f)) >= 75],names(table(m))[as.numeric(table(m)) >= 75])
