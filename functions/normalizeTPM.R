@@ -14,7 +14,9 @@ normalizeTPM <- function(rsem, index_counts) {
   rsem[,index_counts] <- sweep(rsem[,index_counts]*1e6,2,totalreads,"/")
   
   # Scale MT genes and ERCCs by the same factor
-  rsem_mt[,index_counts] <- sweep(rsem_mt[,index_counts]*1e6,2,totalreads,"/")
+  if (nrow(rsem_mt) > 0) {
+    rsem_mt[,index_counts] <- sweep(rsem_mt[,index_counts]*1e6,2,totalreads,"/")
+  }
   if (nrow(rsem_ercc) > 0) {
     rsem_ercc[,index_counts] <- sweep(rsem_ercc[,index_counts]*1e6,2,totalreads,"/")
   }
