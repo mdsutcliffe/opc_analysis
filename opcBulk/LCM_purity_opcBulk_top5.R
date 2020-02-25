@@ -90,39 +90,3 @@ log2diff150 <- cbind(data.frame(row.names = wt150$symbol),log2(wt150[,10:ncol(wt
   mtext(text = markerOrder,side = 1,at = seq(3,49,7),line = 5)
   dev.off()
 }
-
-
-
-
-
-
-
-
-
-
-# What are their highest TPM values, what are our highest?
-# bulk_tpm_150_WT_sort <- sort(x = rowSums(x = bulk_tpm_150_WT[,10:ncol(bulk_tpm_150_WT)]) / length(10:ncol(bulk_tpm_150_WT)),decreasing = T)
-
-bulk_median <- apply(X = bulk_tpm_150_WT[,10:ncol(bulk_tpm_150_WT)],MARGIN = 1,FUN = median)
-bulk_tpm_150_WT_sort <- bulk_tpm_150_WT[order(as.numeric(bulk_median),decreasing = T),]
-bulk_tpm_150_WT_sort$opcBulk_median <- sort(bulk_median,decreasing = T)
-
-sig_max <- apply(X = sig_avg_tpm[,2:ncol(sig_avg_tpm)],MARGIN = 1,FUN = max)
-sig_avg_tpm_sort <- sig_avg_tpm[order(as.numeric(sig_max),decreasing = T),]
-
-bulk_top <- cbind(bulk_tpm_150_WT_sort[1:10,10:ncol(bulk_tpm_150_WT_sort)],sig_avg_tpm[match(bulk_tpm_150_WT_sort$symbol[1:10],sig_avg_tpm$symbol),2:ncol(sig_avg_tpm)])
-names(bulk_top)[1:length(10:ncol(bulk_tpm_150_WT))] <- paste("bulk_WT_150",1:length(10:ncol(bulk_tpm_150_WT)),sep = "_")
-write.csv(x = bulk_top,file = "./temp/LCM_purity_mostAbundant_bulk.csv",quote = F,row.names = T)
-
-sig_top <- cbind(bulk_tpm_150_WT_sort[match(sig_avg_tpm_sort$symbol[1:10],bulk_tpm_150_WT_sort$symbol),10:ncol(bulk_tpm_150_WT_sort)],sig_avg_tpm_sort[1:10,2:ncol(sig_avg_tpm_sort)])
-
-# Collect all in table
-x_summarize <- rbind(cbind(bulk_tpm_150_WT[match(opc_markers,bulk_tpm_150_WT$symbol),10:ncol(bulk_tpm_150_WT)],sig_avg_tpm[match(opc_markers,sig_avg_tpm$symbol),2:ncol(sig_avg_tpm)]),
-                     cbind(bulk_tpm_150_WT[match(nfo_markers,bulk_tpm_150_WT$symbol),10:ncol(bulk_tpm_150_WT)],sig_avg_tpm[match(nfo_markers,sig_avg_tpm$symbol),2:ncol(sig_avg_tpm)]),
-                     cbind(bulk_tpm_150_WT[match(mo_markers,bulk_tpm_150_WT$symbol),10:ncol(bulk_tpm_150_WT)],sig_avg_tpm[match(mo_markers,sig_avg_tpm$symbol),2:ncol(sig_avg_tpm)]),
-                     cbind(bulk_tpm_150_WT[match(microglia_markers,bulk_tpm_150_WT$symbol),10:ncol(bulk_tpm_150_WT)],sig_avg_tpm[match(microglia_markers,sig_avg_tpm$symbol),2:ncol(sig_avg_tpm)]),
-                     cbind(bulk_tpm_150_WT[match(neuron_markers,bulk_tpm_150_WT$symbol),10:ncol(bulk_tpm_150_WT)],sig_avg_tpm[match(neuron_markers,sig_avg_tpm$symbol),2:ncol(sig_avg_tpm)]),
-                     cbind(bulk_tpm_150_WT[match(astrocyte_markers,bulk_tpm_150_WT$symbol),10:ncol(bulk_tpm_150_WT)],sig_avg_tpm[match(astrocyte_markers,sig_avg_tpm$symbol),2:ncol(sig_avg_tpm)]),
-                     cbind(bulk_tpm_150_WT[match(endothelial_markers,bulk_tpm_150_WT$symbol),10:ncol(bulk_tpm_150_WT)],sig_avg_tpm[match(endothelial_markers,sig_avg_tpm$symbol),2:ncol(sig_avg_tpm)]))
-names(x_summarize)[1:length(10:ncol(bulk_tpm_150_WT))] <- paste("bulk_WT_150",1:length(10:ncol(bulk_tpm_150_WT)),sep = "_")
-write.csv(x = x_summarize,file = "./temp/LCM_purity.csv",quote = F,row.names = T)

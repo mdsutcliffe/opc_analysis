@@ -22,15 +22,28 @@ write.table(x = wt150,file = "./temp/mixture_bulk_150_wt.txt",quote = F,sep = "\
 
 # Run cibersort, get results, and place in external folder
 
-f.cibersort <- "./external/CIBERSORTx_bulk_150_wt.txt"
+f.cibersort_12_wt <- "./external/CIBERSORTx_bulk_12_wt.txt"
+f.cibersort_150_wt <- "./external/CIBERSORTx_bulk_150_wt.txt"
 
-cibersort_150_wt <- read.table(file = f.cibersort,header = T,sep = "\t")
+cibersort_12_wt <- read.table(file = f.cibersort_12_wt,header = T,sep = "\t")
+cibersort_150_wt <- read.table(file = f.cibersort_150_wt,header = T,sep = "\t")
+
+row.names(cibersort_12_wt) <- cibersort_12_wt$Mixture
 row.names(cibersort_150_wt) <- cibersort_150_wt$Mixture
+
+cibersort_12_wt <- cibersort_12_wt[,2:(which(names(cibersort_12_wt) == "P.value") - 1)] / cibersort_12_wt$Absolute.score..sig.score.
 cibersort_150_wt <- cibersort_150_wt[,2:(which(names(cibersort_150_wt) == "P.value") - 1)] / cibersort_150_wt$Absolute.score..sig.score.
+
+pdf(file = "./plots/bulk_LCM_purity_12_WT_cibersort.pdf",width = 6,height = 6)
+par(mar = c(1.8,4,1,8),mgp = c(2.9,1,0),xpd = T)
+barplot(t(as.matrix(cibersort_12_wt)),ylab = "Fraction",names.arg = rep(x = "",nrow(cibersort_12_wt)),col = rev(brewer.pal(6,"Set1")),las = 1)
+title(xlab = "12 dpi WT bulk samples",mgp = c(0.5,0,0))
+legend(x = "topright",legend = names(cibersort_12_wt),pch = 15,col = rev(brewer.pal(6,"Set1")),inset = c(-0.4,0))
+dev.off()
 
 pdf(file = "./plots/bulk_LCM_purity_150_WT_cibersort.pdf",width = 6,height = 6)
 par(mar = c(1.8,4,1,8),mgp = c(2.9,1,0),xpd = T)
-barplot(t(as.matrix(cibersort_150_wt)),ylab = "Fraction",names.arg = rep(x = "",ncol(cibersort_150_wt)),col = rev(brewer.pal(6,"Set1")),las = 1)
+barplot(t(as.matrix(cibersort_150_wt)),ylab = "Fraction",names.arg = rep(x = "",nrow(cibersort_150_wt)),col = rev(brewer.pal(6,"Set1")),las = 1)
 title(xlab = "150 dpi WT bulk samples",mgp = c(0.5,0,0))
 legend(x = "topright",legend = names(cibersort_150_wt),pch = 15,col = rev(brewer.pal(6,"Set1")),inset = c(-0.4,0))
 dev.off()

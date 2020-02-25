@@ -244,7 +244,7 @@ bulk_collapse_tpm <- normalizeTPM(rsem = bulk_collapse,index_counts = 10:ncol(bu
 bulk_collapse_tpm_gsc <- bulk_collapse_tpm
 bulk_collapse_tpm_gsc[,10:ncol(bulk_collapse_tpm_gsc)] <- log2(x = bulk_collapse_tpm_gsc[,10:ncol(bulk_collapse_tpm_gsc)]/100 + 1)
 
-pc <- read.csv("./temp/219026_2_supp_5782669_py1bdv.csv")[,1:3]
+pc <- read.csv("./external/219026_2_supp_5782669_py1bdv.csv")[,1:3]
 pc$PC1 <- pc$PC1 / sqrt(sum(pc$PC1^2))
 pc$PC2 <- pc$PC1 / sqrt(sum(pc$PC2^2))
 sum(pc$Gene %in% bulk_collapse_tpm_gsc$symbol)
@@ -271,26 +271,62 @@ pc1_bulk90_WT <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.inf
 pc2_bulk90_WT <- sapply(9+which(bulk_collapse.info$day == 90 & bulk_collapse.info$genotype == "WT"),function(x) sum(pc$PC2 * (bulk_collapse_tpm_gsc[,x]-(pc$PC1 * bulk_collapse_tpm_gsc[,x])),na.rm = T))
 
 
-png("./plots/pc_bulk150_norm.png",width = 1200,height = 1000,res = 250)
-par(mar=c(4.1,4.1,1,0.5))
-plot(pc1_bulk150,pc2_bulk150,xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "150 dpi",pch = 16)
+# png("./plots/pc_bulk150_norm.pdf",width = 1200,height = 1000,res = 250)
+# par(mar=c(4.1,4.1,1,0.5))
+# plot(pc1_bulk150,pc2_bulk150,xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "150 dpi",pch = 16)
+# points(pc1_bulk150_WT,pc2_bulk150_WT)
+# legend("topright",legend = c("WT","CKO (tumor)"),pch=c(1,16))
+# dev.off()
+# 
+# png("./plots/pc_bulk12_norm.pdf",width = 1200,height = 1000,res = 250)
+# par(mar=c(4.1,4.1,1,0.5))
+# plot(pc1_bulk12,pc2_bulk12,xlim = c(-60,60),ylim = c(0,140),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "12 dpi",pch = 16)
+# points(pc1_bulk12_WT,pc2_bulk12_WT)
+# legend("topright",legend = c("WT","CKO"),pch=c(1,16))
+# dev.off()
+# 
+# png("./plots/pc_bulk90_norm.pdf",width = 1200,height = 1000,res = 250)
+# par(mar=c(4.1,4.1,1,0.5))
+# plot(pc1_bulk90,pc2_bulk90,xlim = c(-60,60),ylim = c(0,140),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "90 dpi",pch = 16)
+# points(pc1_bulk90_WT,pc2_bulk90_WT)
+# legend("topright",legend = c("WT","CKO"),pch=c(1,16))
+# dev.off()
+
+
+png("./plots/pc_bulk150.pdf",width = 6,height = 6)
+par(mar=c(1.1,1.1,1,0.5))
+plot(pc1_bulk150,pc2_bulk150,xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "150 dpi",pch = 16,xlim = c(-60,60),ylim = c(0,140))
 points(pc1_bulk150_WT,pc2_bulk150_WT)
-legend("topright",legend = c("WT","CKO (tumor)"),pch=c(1,16))
+legend("topright",legend = c("WT","N1P"),pch=c(1,16))
 dev.off()
 
-png("./plots/pc_bulk12_norm.png",width = 1200,height = 1000,res = 250)
+pdf(file = "./plots/PC_bulk_150.pdf",width = 2,height = 2,pointsize = 6)
+par(mar=c(3.5,3.5,1,1))
+plot(x = c(),y = c(),xlim = c(-60,60),ylim = c(0,140),xlab = "PC1",ylab = "PC2",frame = F,axes = F,xaxs = "i",yaxs = "i",mgp = c(2.5,2.5,0))
+axis(side = 1,lwd = 0.5)
+axis(side = 2,lwd = 0.5,las = 1)
+points(x = pc1_bulk150_WT,y = pc2_bulk150_WT,pch = 1,lwd = 0.5)
+points(x = pc1_bulk150,y = pc2_bulk150,pch = 16,lwd = 0.5)
+legend("topright",legend = c("WT","N1P"),pch = c(1,16),pt.lwd = c(0.5,0.5),box.lwd = 0.5,)
+dev.off()
+
+png("./plots/pc_bulk12.pdf",width = 1200,height = 1000,res = 250)
 par(mar=c(4.1,4.1,1,0.5))
 plot(pc1_bulk12,pc2_bulk12,xlim = c(-60,60),ylim = c(0,140),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "12 dpi",pch = 16)
 points(pc1_bulk12_WT,pc2_bulk12_WT)
 legend("topright",legend = c("WT","CKO"),pch=c(1,16))
 dev.off()
 
-png("./plots/pc_bulk90_norm.png",width = 1200,height = 1000,res = 250)
+png("./plots/pc_bulk90.pdf",width = 1200,height = 1000,res = 250)
 par(mar=c(4.1,4.1,1,0.5))
 plot(pc1_bulk90,pc2_bulk90,xlim = c(-60,60),ylim = c(0,140),xlab = "PC1",ylab = "PC2",las = 1,frame = F,main = "90 dpi",pch = 16)
 points(pc1_bulk90_WT,pc2_bulk90_WT)
 legend("topright",legend = c("WT","CKO"),pch=c(1,16))
 dev.off()
+
+
+
+
 
 # Using full PC loadings - log10
 {
