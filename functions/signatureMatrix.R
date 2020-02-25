@@ -1,10 +1,8 @@
 # Cibersort signature matrix
-signatureMatrix <- function(geneList,removeWholeCortex = TRUE,removeNFO = TRUE,oligoIndependence = TRUE) {
+signatureMatrix <- function(geneList,nGenesEach = 40,removeWholeCortex = TRUE,removeNFO = TRUE,oligoIndependence = TRUE) {
   
   f.barres <- list.files(path = "./external/GSE52564_RAW",full.names = T)
   f.barres_base <- basename(f.barres)
-  
-  nGenesEach <- 40
   
   sig <- read_xls(path = f.barres[1])[,1]
   names(sig)[1] <- "symbol"
@@ -85,8 +83,8 @@ signatureMatrix <- function(geneList,removeWholeCortex = TRUE,removeNFO = TRUE,o
   
   sig_avg_tpm_sigGenes <- sig_avg_tpm[match(allSigGenes,sig_avg_tpm$symbol),]
   
-  return(list(signatureTPM_all = sig_avg_tpm,
-              nSignatureGenes = nGenesEach,
-              signatureGenes = allSigGenes,
-              signatureTPM = sig_avg_tpm_sigGenes))
+  return(list(matrix = sig_avg_tpm_sigGenes,
+              tpm = sig_avg_tpm,
+              nGenes = nGenesEach,
+              genes = allSigGenes))
 }
