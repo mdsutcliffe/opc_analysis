@@ -92,49 +92,9 @@ log2diff150 <- cbind(data.frame(row.names = wt150$symbol),log2(wt150[,10:ncol(wt
 }
 
 
-# Re-run to remove NFOs for mixture matrix
-signature_cibersort <- signatureMatrix(geneList = bulk$rsem$symbol,removeNFO = T)
-
-wt12_cibersort <- bulk$tpm[,c(1:9,9+which(bulk$info$day == 12 & bulk$info$genotype == "WT"))]
-wt12_cibersort <- wt12_cibersort[match(signature_cibersort$genes,wt12_cibersort$symbol),c(3,10:ncol(wt12_cibersort))]
-
-wt150_cibersort <- bulk$tpm[,c(1:9,9+which(bulk$info$day == 150 & bulk$info$genotype == "WT"))]
-wt150_cibersort <- wt150_cibersort[match(signature_cibersort$genes,wt150_cibersort$symbol),c(3,10:ncol(wt150_cibersort))]
-
-write.table(x = wt12_cibersort,file = "./temp/mixture_bulk_12_wt.txt",quote = F,sep = "\t",row.names = F)
-write.table(x = wt150_cibersort,file = "./temp/mixture_bulk_150_wt.txt",quote = F,sep = "\t",row.names = F)
 
 
-# Plot
-{
-  pdf(file = "./plots/bulk_LCM_purity_150_WT.pdf",width = 10,height = 4)
-  par(mar = c(6,4,1,1),mfrow = c(2,1),mgp = c(2.9,1,0))
-  boxplot(t(bulk_tpm_150_WT_sig),at = (1:49)[(1:49) %% 7 != 0 & (1:49) %% 7 != 6],las = 2,ylab = "Bulk TPM / (Signature TPM)")
-  title(xlab = "     OPC                    NFO                     MO                 Microglia                Neuron              Astrocyte               Endothelial",mgp = c(5,0,0))
-  boxplot(t(bulk_tpm_150_WT_sig),at = (1:49)[(1:49) %% 7 != 0 & (1:49) %% 7 != 6],las = 2,ylim = c(0,0.3),ylab = "Bulk TPM / (Signature TPM)")
-  title(xlab = "     OPC                    NFO                     MO                 Microglia                Neuron              Astrocyte               Endothelial",mgp = c(5,0,0))
-  dev.off()
-  
-  pdf(file = "./plots/bulk_LCM_purity_12_WT.pdf",width = 10,height = 4)
-  par(mar = c(6,4,1,1),mfrow = c(2,1),mgp = c(2.9,1,0))
-  boxplot(t(bulk_tpm_12_WT_sig),at = (1:49)[(1:49) %% 7 != 0 & (1:49) %% 7 != 6],las = 2,ylab = "Bulk TPM / (Signature TPM)")
-  title(xlab = "     OPC                    NFO                     MO                 Microglia                Neuron              Astrocyte               Endothelial",mgp = c(5,0,0))
-  boxplot(t(bulk_tpm_12_WT_sig),at = (1:49)[(1:49) %% 7 != 0 & (1:49) %% 7 != 6],las = 2,ylim = c(0,0.3),ylab = "Bulk TPM / (Signature TPM)")
-  title(xlab = "     OPC                    NFO                     MO                 Microglia                Neuron              Astrocyte               Endothelial",mgp = c(5,0,0))
-  dev.off()
-  
-  pdf(file = "./plots/bulk_LCM_purity_150_WT_log2.pdf",width = 10,height = 4)
-  par(mar = c(6,4,1,1),mgp = c(2.9,1,0))
-  boxplot(t(bulk_tpm_150_WT_sig_log2),at = (1:49)[(1:49) %% 7 != 0 & (1:49) %% 7 != 6],las = 2,ylab = expression("Log"[2]*"(Bulk TPM) - Log"[2]*"(Signature TPM)"),ylim = c(-12,2))
-  title(xlab = "     OPC                    NFO                     MO                 Microglia                Neuron              Astrocyte               Endothelial",mgp = c(5,0,0))
-  dev.off()
-  
-  pdf(file = "./plots/bulk_LCM_purity_12_WT_log2.pdf",width = 10,height = 4)
-  par(mar = c(6,4,1,1),mgp = c(2.9,1,0))
-  boxplot(t(bulk_tpm_12_WT_sig_log2),at = (1:49)[(1:49) %% 7 != 0 & (1:49) %% 7 != 6],las = 2,ylab = expression("Log"[2]*"(Bulk TPM) - Log"[2]*"(Signature TPM)"),ylim = c(-12,2))
-  title(xlab = "     OPC                    NFO                     MO                 Microglia                Neuron              Astrocyte               Endothelial",mgp = c(5,0,0))
-  dev.off()
-}
+
 
 
 

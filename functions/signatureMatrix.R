@@ -1,5 +1,5 @@
 # Cibersort signature matrix
-signatureMatrix <- function(geneList,nGenesEach = 40,removeWholeCortex = TRUE,removeNFO = TRUE,oligoIndependence = TRUE) {
+signatureMatrix <- function(geneList = NULL,nGenesEach = 40,removeWholeCortex = TRUE,removeNFO = TRUE,oligoIndependence = TRUE) {
   
   f.barres <- list.files(path = "./external/GSE52564_RAW",full.names = T)
   f.barres_base <- basename(f.barres)
@@ -32,7 +32,11 @@ signatureMatrix <- function(geneList,nGenesEach = 40,removeWholeCortex = TRUE,re
   names(sig_avg)[2:ncol(sig_avg)] <- levels(cell_types)
   
   # Normalize against gene intersection
+  if (!is.null(geneList)) {
   commonGenes <- intersect(x = sig_avg$symbol,y = geneList)
+  } else {
+    commonGenes <- sig_avg$symbol
+  }
   
   # Convert FPKM to TPM for later
   sig_avg_tpm <- sig_avg[match(commonGenes,sig_avg$symbol),]
