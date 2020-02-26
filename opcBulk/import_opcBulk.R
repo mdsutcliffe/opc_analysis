@@ -64,9 +64,12 @@ import_opcBulk <- function() {
   
   bulk_collapse_tpm <- normalizeTPM(rsem = bulk_collapse,index_counts = 10:ncol(bulk_collapse))
   
+  bulk_collapse_tpm_log2 <- cbind(bulk_collapse_tpm[,1:9],log2(bulk_collapse_tpm[,10:ncol(bulk_collapse_tpm)] + 1))
+  
   return(list(rsem = bulk_collapse,
               info = bulk_collapse.info,
-              tpm = bulk_collapse_tpm))
+              tpm = bulk_collapse_tpm,
+              log2 = bulk_collapse_tpm_log2))
 }
 
 bulk <- import_opcBulk()
