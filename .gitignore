@@ -1,12 +1,7 @@
-/.Rproj.user/
+/.Rproj.user
 /opc_analysis.Rproj
-.Rproj.user
-/ssgsea.GBM.classification/
 /temp/
 /plots/
-/data/
-/rivanna/info_opc12.csv
-/rivanna/rsem_opc12.csv
-/rivanna/opc12_prepared.RData
+/data
 /build/
 /external/
