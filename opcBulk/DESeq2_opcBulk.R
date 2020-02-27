@@ -65,33 +65,33 @@ fc_down <- res_plus_150$results$log2FoldChange[!is.na(res_plus_150$results$pvalu
 p_down <- res_plus_150$results$pvalue[!is.na(res_plus_150$results$pvalue) & res_plus_150$results$padj < 0.05 & res_plus_150$results$log2FoldChange < 0]
 
 
-
-
-
-# png("./plots/volcano_150.png",width = 2000,height = 2000,res = 300)
-pdf("./plots/volcano_bulk150.pdf",width = 2,height = 2,pointsize = 6)
-par(mar=c(4.1,4.1,0.5,0.5))
-plot(fc,-log(p,base = 10),
-     xlim = c(-10,10),
-     ylim = c(0,100),
-     xlab = expression("Log"[2]*" fold change"),
-     ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
-     las = 1,frame = F,lwd = 0.5)
-points(fc_up,-log(p_up,base = 10),col = "#de2d26",lwd = 0.5)
-points(fc_down,-log(p_down,base = 10),col = "#3182bd",lwd = 0.6)
-legend(x = "topright",legend = c("Increased","Decreased"),col = c("#de2d26","#3182bd"),pch=c(1,1),pt.lwd = c(0.5,0.5),box.lwd = 0.5)
-dev.off()
-
-
-msigdb_path <- msigdb_download_all(species = "Mus musculus",output_dir = "./external")
-hallmark <- msigdb_fetch(msigdb_path = msigdb_path,symbol = "H")
-
-bulk_150_up <- hypeR(signature = row.names(res_plus_150$results[res_plus_150$results$log2FoldChange > 0 & !is.na(res_plus_150$results$padj) & res_plus_150$results$padj < 0.05,]),gsets = hallmark,fdr_cutoff = 0.01,do_plots = T)
-pdf("./plots/enrichment_bulk_150_up.pdf",width = 5.5,height = 6,pointsize = 6)
-hyp_dots(bulk_150_up,top = 100)
-dev.off()
-
-bulk_150_down <- hypeR(signature = row.names(res_plus_150$results[res_plus_150$results$log2FoldChange < 0 & !is.na(res_plus_150$results$padj) & res_plus_150$results$padj < 0.05,]),gsets = hallmark,fdr_cutoff = 0.05,do_plots = T)
-pdf("./plots/enrichment_bulk_150_down.pdf",width = 5.5,height = 6,pointsize = 6)
-hyp_dots(bulk_150_down,top = 100,)
-dev.off()
+# 
+# 
+# 
+# # png("./plots/volcano_150.png",width = 2000,height = 2000,res = 300)
+# pdf("./plots/volcano_bulk150.pdf",width = 2,height = 2,pointsize = 6)
+# par(mar=c(4.1,4.1,0.5,0.5))
+# plot(fc,-log(p,base = 10),
+#      xlim = c(-10,10),
+#      ylim = c(0,100),
+#      xlab = expression("Log"[2]*" fold change"),
+#      ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
+#      las = 1,frame = F,lwd = 0.5)
+# points(fc_up,-log(p_up,base = 10),col = "#de2d26",lwd = 0.5)
+# points(fc_down,-log(p_down,base = 10),col = "#3182bd",lwd = 0.6)
+# legend(x = "topright",legend = c("Increased","Decreased"),col = c("#de2d26","#3182bd"),pch=c(1,1),pt.lwd = c(0.5,0.5),box.lwd = 0.5)
+# dev.off()
+# 
+# 
+# msigdb_path <- msigdb_download_all(species = "Mus musculus",output_dir = "./external")
+# hallmark <- msigdb_fetch(msigdb_path = msigdb_path,symbol = "H")
+# 
+# bulk_150_up <- hypeR(signature = row.names(res_plus_150$results[res_plus_150$results$log2FoldChange > 0 & !is.na(res_plus_150$results$padj) & res_plus_150$results$padj < 0.05,]),gsets = hallmark,fdr_cutoff = 0.01,do_plots = T)
+# pdf("./plots/enrichment_bulk_150_up.pdf",width = 5.5,height = 6,pointsize = 6)
+# hyp_dots(bulk_150_up,top = 100)
+# dev.off()
+# 
+# bulk_150_down <- hypeR(signature = row.names(res_plus_150$results[res_plus_150$results$log2FoldChange < 0 & !is.na(res_plus_150$results$padj) & res_plus_150$results$padj < 0.05,]),gsets = hallmark,fdr_cutoff = 0.05,do_plots = T)
+# pdf("./plots/enrichment_bulk_150_down.pdf",width = 5.5,height = 6,pointsize = 6)
+# hyp_dots(bulk_150_down,top = 100,)
+# dev.off()

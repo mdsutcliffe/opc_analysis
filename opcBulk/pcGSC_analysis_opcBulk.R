@@ -3,7 +3,6 @@
 library(biomaRt)
 
 source("./opcBulk/import_opcBulk.R")
-source("./functions/collapseIsoforms.R")
 
 load("./build/speciesConversion.RData")
 

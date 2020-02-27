@@ -1,37 +1,47 @@
 # Throw everything into UMAP
 
-library(umapr)
+# library(umapr)
 library(uwot)
 
 source("./opcBulk/import_opcBulk.R")
 source("./opc12/import_opc12.R")
 source("./opc90/import_opc90.R")
+source("./opcBulk/cleancounts_bulk.R")
+
+opc12F <- read.table(file = "./data/opc12_true/cleancounts_female_true.tsv")
+opc12M <- read.table(file = "./data/opc12_true/cleancounts_male_true.tsv")
+opc90F <- read.table(file = "./data/opc90_true/cleancounts_female_true.tsv")
+opc90M <- read.table(file = "./data/opc90_true/cleancounts_male_true.tsv")
+
+allCommonGenes <- Reduce(intersect,list(row.names(opc12F),row.names(opc12M),
+                      row.names(opc90F),row.names(opc90M),
+                      row.names(bulk_clean$bulk12),row.names(bulk_clean$bulk90),row.names(bulk_clean$bulk150)))
 
 opc <- cbind(data.frame(row.names = bulk$log2$symbol),
              bulk$log2[,10:ncol(bulk$log2)],
              opc12$log2[opc12$log2$chr != "ERCC",9 + which(opc12$info$type == "ten-cell")],
              opc90$log2[opc90$log2$chr != "ERCC",9 + which(opc90$info$type == "ten-cell")])
-opc <- opc[rowSums(opc) != 0,]
-
+opc <- opc[allCommonGenes,]
 
 opc.info <- c(paste("bulk",bulk$info$day,bulk$info$genotype,sep = "_"),
               paste("opc12",opc12$info$type[opc12$info$type == "ten-cell"],sep = "_"),
               paste("opc90",opc90$info$type[opc90$info$type == "ten-cell"],sep = "_"))
 
-opc_umap <- uwot::umap(X = t(opc),n_neighbors = 14,learning_rate = 0.5,init = "random")
+opc_umap <- uwot::umap(X = t(opc),n_neighbors = 14)
+plot(opc_umap)
 
 pdf(file = "./plots/umap_all.pdf",width = 3,height = 3,pointsize = 6)
 par(mar = c(4,4,1,1))
 plot(x = c(),y = c(),
-     xlim = c(-8,16),
-     ylim = c(-3,4),
+     xlim = c(-6,6),
+     ylim = c(-4,8),
      xlab = "UMAP-1",
      ylab = "UMAP-2",
      xaxs = "i",
      yaxs = "i",
      axes = F)
-axis(side = 1,at = seq(-8,16,4))
-axis(side = 2,at = seq(-3,4),las = 1)
+axis(side = 1,at = seq(-6,6,2))
+axis(side = 2,at = seq(-4,8,2),las = 1)
 points(opc_umap[grepl(pattern = "WT",x = opc.info),],pch = 1,lwd = 0.5)
 points(opc_umap[grepl(pattern = "CKO",x = opc.info),],pch = 16)
 
@@ -46,7 +56,7 @@ pca_plot <- ggbiplot(opc_pca,var.axes = F,groups = factor(opc.info)) + theme_bw(
 ggsave(filename = "./plots/pca_all.pdf",plot = pca_plot,width = 6,height = 6,units = "in")
 
 opc_filter <- opc[rowSums(opc > 0) > 37,]
-opc_annotation <- data.frame(row.names = names(opc_filter),
+opc_annotation <- data.frame(row.names = names(opc),
                              study = c(rep("bulk",36),rep("opc12",56),rep("opc90",56)),
                              sex = c(as.character(bulk$info$sex),opc12$info$sex[opc12$info$type == "ten-cell"],opc90$info$sex[opc90$info$type == "ten-cell"]),
                              dpi = as.character(c(as.numeric(as.character(bulk$info$day)),rep(12,56),rep(90,56))),
@@ -55,18 +65,18 @@ opc_annotation <- data.frame(row.names = names(opc_filter),
 library(pheatmap)
 library(RColorBrewer)
 png(filename = "./plots/heatmap_all.png",width = 2000,height = 2000,res = 200)
-pheatmap(mat = opc_filter,color = rev(brewer.pal(11,"RdBu")[c(1:4,6,8:11)]),scale = "row",show_rownames = F,show_colnames = F,clustering_method = "ward.D2",annotation_col = opc_annotation)
+pheatmap(mat = opc,color = rev(brewer.pal(11,"RdBu")[c(1:4,6,8:11)]),scale = "row",show_rownames = F,show_colnames = F,clustering_method = "ward.D2",annotation_col = opc_annotation)
 dev.off()
 
 
 
-bulk_only <- bulk$log2[,10:ncol(bulk$log2)]
+bulk_only <- bulk$log2[bulk$log$symbol %in% Reduce(intersect,list(row.names(bulk_clean$bulk12),row.names(bulk_clean$bulk90),row.names(bulk_clean$bulk150))),10:ncol(bulk$log2)]
 bulk_umap <- uwot::umap(X = t(bulk_only),n_neighbors = 14)
-
+plot(bulk_umap)
 pdf(file = "./plots/umap_bulk.pdf",width = 3,height = 3,pointsize = 6)
 par(mar = c(4,4,1,1))
 plot(x = c(),y = c(),
-     xlim = c(-2,2),
+     xlim = c(-4,3),
      ylim = c(-3,3),
      xlab = "UMAP-1",
      ylab = "UMAP-2",
@@ -90,15 +100,15 @@ dev.off()
 
 
 tencell <- cbind(opc12$log2[,9+which(opc12$info$type == "ten-cell")],opc90$log2[,9+which(opc90$info$type == "ten-cell")])
-tencell <- tencell[rowSums(tencell > 0) > 14,]
+tencell <- tencell[opc12$log2$symbol %in% Reduce(intersect,list(row.names(opc12F),row.names(opc12M),row.names(opc90F),row.names(opc90M))),]
 tencell_umap <- uwot::umap(X = t(tencell),n_neighbors = 14)
 plot(tencell_umap)
 
 pdf(file = "./plots/umap_10c.pdf",width = 3,height = 3,pointsize = 6)
 par(mar = c(4,4,1,1))
 plot(x = c(),y = c(),
-     xlim = c(-3,3),
-     ylim = c(-6,4),
+     xlim = c(-4,6),
+     ylim = c(-2,2),
      xlab = "UMAP-1",
      ylab = "UMAP-2",
      xaxs = "i",
@@ -118,15 +128,15 @@ legend(x = "topright",
 dev.off()
 
 
-opc12_10c <- opc12$log2[,9+which(opc12$info$type == "ten-cell")]
-opc12_10c <- opc12_10c[rowSums(opc12_10c > 0) > 7,]
+opc12_10c <- opc12$log2[opc12$log2$symbol %in% intersect(row.names(opc12F),row.names(opc12M)),9+which(opc12$info$type == "ten-cell")]
+# opc12_10c <- opc12_10c[opc12$log,]
 opc12_10c_umap <- uwot::umap(X = t(opc12_10c),n_neighbors = 7)
 plot(opc12_10c_umap)
 pdf(file = "./plots/umap_10c_12dpi.pdf",width = 3,height = 3,pointsize = 6)
 par(mar = c(4,4,1,1))
 plot(x = c(),y = c(),
-     xlim = c(-4,4),
-     ylim = c(-6,4),
+     xlim = c(-6,6),
+     ylim = c(-4,6),
      xlab = "UMAP-1",
      ylab = "UMAP-2",
      xaxs = "i",
@@ -144,15 +154,19 @@ legend(x = "topright",
 dev.off()
 
 
-opc90_10c <- opc90$log2[,9+which(opc90$info$type == "ten-cell")]
-opc90_10c <- opc90_10c[rowSums(opc90_10c > 0) > 7,]
+
+
+
+
+opc90_10c <- opc90$log2[opc90$log2$symbol %in% intersect(row.names(opc90F),row.names(opc90M)),9+which(opc90$info$type == "ten-cell")]
+# opc90_10c <- opc90_10c[rowSums(opc90_10c > 0) > 7,]
 opc90_10c_umap <- uwot::umap(X = t(opc90_10c),n_neighbors = 7)
 plot(opc90_10c_umap)
 pdf(file = "./plots/umap_10c_90dpi.pdf",width = 3,height = 3,pointsize = 6)
 par(mar = c(4,4,1,1))
 plot(x = c(),y = c(),
-     xlim = c(-2,2),
-     ylim = c(-4,4),
+     xlim = c(-4,4),
+     ylim = c(-2,2),
      xlab = "UMAP-1",
      ylab = "UMAP-2",
      xaxs = "i",
@@ -167,4 +181,218 @@ legend(x = "topright",
        col = rep(x = "#31a354",2),
        pch = c(1,4),
        pt.lwd = 2, box.lwd = 0.5)
+dev.off()
+
+
+
+
+
+# Bulk using only DE genes -----
+source("./opcBulk/DESeq2_opcBulk.R")
+bulk_only <- bulk$log2[bulk$log$symbol %in% Reduce(f = union,x = list(res_plus_12$genesDE,
+                                                                      res_plus_90$genesDE,
+                                                                      res_plus_150$genesDE)),10:ncol(bulk$log2)]
+set.seed(0)
+bulk_umap <- uwot::umap(X = t(bulk_only),n_neighbors = 14)
+plot(bulk_umap)
+pdf(file = "./plots/umap_bulk_DEgenes.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-10,4),
+     ylim = c(-4,6),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(bulk_umap[bulk$info$day == 12 & bulk$info$genotype == "WT",],pch = 1,lwd = 0.5,col = "#3182bd")
+points(bulk_umap[bulk$info$day == 12 & bulk$info$genotype == "CKO",],pch = 16,lwd = 0.5,col = "#3182bd")
+points(bulk_umap[bulk$info$day == 90 & bulk$info$genotype == "WT",],pch = 1,lwd = 0.5,col = "#31a354")
+points(bulk_umap[bulk$info$day == 90 & bulk$info$genotype == "CKO",],pch = 16,lwd = 0.5,col = "#31a354")
+points(bulk_umap[bulk$info$day == 150 & bulk$info$genotype == "WT",],pch = 1,lwd = 0.5,col = "#de2d26")
+points(bulk_umap[bulk$info$day == 150 & bulk$info$genotype == "CKO",],pch = 16,lwd = 0.5,col = "#de2d26")
+legend(x = "topright",
+       legend = c("12 dpi WT","12 dpi N1P","90 dpi WT","90 dpi N1P","150 dpi WT","150 dpi N1P"),
+       col = rep(x = c("#3182bd","#31a354","#de2d26"),each = 2),
+       pch = c(1,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
+dev.off()
+
+# Ten-cell using only the RHEGs -----
+source("./opc12/RHEGs_opc12.R")
+source("./opc90/RHEGs_opc90.R")
+tencell <- cbind(data.frame(row.names = opc12$log2$symbol),
+                 opc12$log2[,9+which(opc12$info$type == "ten-cell")],
+                 opc90$log2[,9+which(opc90$info$type == "ten-cell")])
+tencell <- tencell[Reduce(f = union,x = list(opc12_rheg,opc90_rheg)),]
+
+
+set.seed(0)
+tencell_umap <- uwot::umap(X = t(tencell),n_neighbors = 7)
+plot(tencell_umap)
+
+
+
+pdf(file = "./plots/umap_10c.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-4,4),
+     ylim = c(-4,4),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(tencell_umap[(1:56)[opc12$info$sex == "female"],],pch = 1,lwd = 2,col = "#3182bd")
+points(tencell_umap[(1:56)[opc12$info$sex == "male"],],pch = 4,lwd = 2,col = "#3182bd")
+points(tencell_umap[(57:112)[opc90$info$sex == "female"],],pch = 1,lwd = 2,col = "#31a354")
+points(tencell_umap[(57:112)[opc90$info$sex == "male"],],pch = 4,lwd = 2,col = "#31a354")
+legend(x = "topright",
+       legend = c("12 dpi Female","12 dpi Male","90 dpi Female","90 dpi Male"),
+       col = rep(x = c("#3182bd","#31a354"),each = 2),
+       pch = rep(x = c(1,4),2),
+       pt.lwd = 2, box.lwd = 0.5)
+dev.off()
+
+
+# opc12 RHEGs only -----
+opc12_10c <- opc12$log2[opc12$log2$symbol %in% opc12_rheg,9+which(opc12$info$type == "ten-cell")]
+# opc12_10c <- opc12$log2[opc12$log2$symbol %in% Reduce(f = union,x = list(opc12_rheg,opc12_uniqueF,opc12_uniqueM)),9+which(opc12$info$type == "ten-cell")]
+# opc12_10c <- opc12_10c[opc12$log,]
+set.seed(0)
+opc12_10c_umap <- uwot::umap(X = t(opc12_10c),n_neighbors = 7)
+plot(opc12_10c_umap)
+pdf(file = "./plots/umap_10c_12dpi.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-3,3),
+     ylim = c(-3,3),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(opc12_10c_umap[opc12$info$sex[opc12$info$type == "ten-cell"] == "female",],pch = 1,lwd = 2,col = "#3182bd")
+points(opc12_10c_umap[opc12$info$sex[opc12$info$type == "ten-cell"] == "male",],pch = 4,lwd = 2,col = "#3182bd")
+legend(x = "topright",
+       legend = c("12 dpi Female","12 dpi Male"),
+       col = rep(x = "#3182bd",2),
+       pch = c(1,4),
+       pt.lwd = 2, box.lwd = 0.5)
+dev.off()
+
+# opc90 RHEGs only -----
+opc90_10c <- opc90$log2[opc90$log2$symbol %in% opc90_rheg,9+which(opc90$info$type == "ten-cell")]
+# opc90_10c <- opc90$log2[opc90$log2$symbol %in% Reduce(f = union,x = list(opc90_rheg,opc90_uniqueF,opc90_uniqueM)),9+which(opc90$info$type == "ten-cell")]
+# opc90_10c <- opc90_10c[rowSums(opc90_10c > 0) > 7,]
+set.seed(0)
+opc90_10c_umap <- uwot::umap(X = t(opc90_10c),n_neighbors = 7)
+plot(opc90_10c_umap)
+pdf(file = "./plots/umap_10c_90dpi.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-3,3),
+     ylim = c(-3,3),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(opc90_10c_umap[opc90$info$sex[opc90$info$type == "ten-cell"] == "female",],pch = 1,lwd = 2,col = "#31a354")
+points(opc90_10c_umap[opc90$info$sex[opc90$info$type == "ten-cell"] == "male",],pch = 4,lwd = 2,col = "#31a354")
+legend(x = "topright",
+       legend = c("90 dpi Female","90 dpi Male"),
+       col = rep(x = "#31a354",2),
+       pch = c(1,4),
+       pt.lwd = 2, box.lwd = 0.5)
+dev.off()
+
+# Everything together, only DE + RHEGs
+
+allCommonGenes <- Reduce(union,list(opc12_rheg,
+                                        opc90_rheg,
+                                        res_plus_12$genesDE,
+                                        res_plus_90$genesDE,
+                                        res_plus_150$genesDE))
+
+opc <- cbind(data.frame(row.names = bulk$log2$symbol),
+             bulk$log2[,10:ncol(bulk$log2)],
+             opc12$log2[opc12$log2$chr != "ERCC",9 + which(opc12$info$type == "ten-cell")],
+             opc90$log2[opc90$log2$chr != "ERCC",9 + which(opc90$info$type == "ten-cell")])
+opc <- opc[allCommonGenes,]
+
+opc.info <- c(paste("bulk",bulk$info$day,bulk$info$genotype,sep = "_"),
+              paste("opc12",opc12$info$type[opc12$info$type == "ten-cell"],sep = "_"),
+              paste("opc90",opc90$info$type[opc90$info$type == "ten-cell"],sep = "_"))
+
+set.seed(0)
+opc_umap <- uwot::umap(X = t(opc),n_neighbors = 14)
+plot(opc_umap)
+
+pdf(file = "./plots/umap_all_de_rheg.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-4,10),
+     ylim = c(-10,6),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(opc_umap[grepl(pattern = "WT",x = opc.info),],pch = 1,lwd = 0.5)
+points(opc_umap[grepl(pattern = "CKO",x = opc.info),],pch = 16)
+
+points(opc_umap[grepl(pattern = "opc12",x = opc.info),],pch = 16,col = "#e41a1c")
+points(opc_umap[grepl(pattern = "opc90",x = opc.info),],pch = 16,col = "#377eb8")
+legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c-12dpi","10c-90dpi"),col = c("#000000","#000000","#e41a1c","#377eb8"),pch = c(1,16,16,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
+dev.off()
+
+# Everything together, DE + union of M/F unique/rhegs
+allCommonGenes <- Reduce(union,list(opc12_rheg,opc12_uniqueF,opc12_uniqueM,
+                                    opc90_rheg,opc90_uniqueF,opc90_uniqueM,
+                                    res_plus_12$genesDE,
+                                    res_plus_90$genesDE,
+                                    res_plus_150$genesDE))
+
+opc <- cbind(data.frame(row.names = bulk$log2$symbol),
+             bulk$log2[,10:ncol(bulk$log2)],
+             opc12$log2[opc12$log2$chr != "ERCC",9 + which(opc12$info$type == "ten-cell")],
+             opc90$log2[opc90$log2$chr != "ERCC",9 + which(opc90$info$type == "ten-cell")])
+opc <- opc[allCommonGenes,]
+
+opc.info <- c(paste("bulk",bulk$info$day,bulk$info$genotype,sep = "_"),
+              paste("opc12",opc12$info$type[opc12$info$type == "ten-cell"],sep = "_"),
+              paste("opc90",opc90$info$type[opc90$info$type == "ten-cell"],sep = "_"))
+
+set.seed(0)
+opc_umap <- uwot::umap(X = t(opc),n_neighbors = 14)
+plot(opc_umap)
+
+pdf(file = "./plots/umap_all_de_rheg_unionMF.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-10,10),
+     ylim = c(-6,6),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(opc_umap[grepl(pattern = "WT",x = opc.info),],pch = 1,lwd = 0.5)
+points(opc_umap[grepl(pattern = "CKO",x = opc.info),],pch = 16)
+
+points(opc_umap[grepl(pattern = "opc12",x = opc.info),],pch = 16,col = "#e41a1c")
+points(opc_umap[grepl(pattern = "opc90",x = opc.info),],pch = 16,col = "#377eb8")
+legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c-12dpi","10c-90dpi"),col = c("#000000","#000000","#e41a1c","#377eb8"),pch = c(1,16,16,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
 dev.off()
