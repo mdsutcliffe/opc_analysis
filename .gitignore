@@ -1,3 +1,4 @@
+/.*
 /.Rproj.user
 /opc_analysis.Rproj
 /temp/
@@ -5,3 +6,4 @@
 /data
 /build/
 /external/
+.Rproj.user

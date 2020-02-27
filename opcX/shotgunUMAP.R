@@ -57,3 +57,114 @@ library(RColorBrewer)
 png(filename = "./plots/heatmap_all.png",width = 2000,height = 2000,res = 200)
 pheatmap(mat = opc_filter,color = rev(brewer.pal(11,"RdBu")[c(1:4,6,8:11)]),scale = "row",show_rownames = F,show_colnames = F,clustering_method = "ward.D2",annotation_col = opc_annotation)
 dev.off()
+
+
+
+bulk_only <- bulk$log2[,10:ncol(bulk$log2)]
+bulk_umap <- uwot::umap(X = t(bulk_only),n_neighbors = 14)
+
+pdf(file = "./plots/umap_bulk.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-2,2),
+     ylim = c(-3,3),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(bulk_umap[bulk$info$day == 12 & bulk$info$genotype == "WT",],pch = 1,lwd = 0.5,col = "#3182bd")
+points(bulk_umap[bulk$info$day == 12 & bulk$info$genotype == "CKO",],pch = 16,lwd = 0.5,col = "#3182bd")
+points(bulk_umap[bulk$info$day == 90 & bulk$info$genotype == "WT",],pch = 1,lwd = 0.5,col = "#31a354")
+points(bulk_umap[bulk$info$day == 90 & bulk$info$genotype == "CKO",],pch = 16,lwd = 0.5,col = "#31a354")
+points(bulk_umap[bulk$info$day == 150 & bulk$info$genotype == "WT",],pch = 1,lwd = 0.5,col = "#de2d26")
+points(bulk_umap[bulk$info$day == 150 & bulk$info$genotype == "CKO",],pch = 16,lwd = 0.5,col = "#de2d26")
+
+legend(x = "topright",
+       legend = c("12 dpi WT","12 dpi N1P","90 dpi WT","90 dpi N1P","150 dpi WT","150 dpi N1P"),
+       col = rep(x = c("#3182bd","#31a354","#de2d26"),each = 2),
+       pch = c(1,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
+dev.off()
+
+
+tencell <- cbind(opc12$log2[,9+which(opc12$info$type == "ten-cell")],opc90$log2[,9+which(opc90$info$type == "ten-cell")])
+tencell <- tencell[rowSums(tencell > 0) > 14,]
+tencell_umap <- uwot::umap(X = t(tencell),n_neighbors = 14)
+plot(tencell_umap)
+
+pdf(file = "./plots/umap_10c.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-3,3),
+     ylim = c(-6,4),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(tencell_umap[(1:56)[opc12$info$sex == "female"],],pch = 1,lwd = 2,col = "#3182bd")
+points(tencell_umap[(1:56)[opc12$info$sex == "male"],],pch = 4,lwd = 2,col = "#3182bd")
+points(tencell_umap[(57:112)[opc90$info$sex == "female"],],pch = 1,lwd = 2,col = "#31a354")
+points(tencell_umap[(57:112)[opc90$info$sex == "male"],],pch = 4,lwd = 2,col = "#31a354")
+legend(x = "topright",
+       legend = c("12 dpi Female","12 dpi Male","90 dpi Female","90 dpi Male"),
+       col = rep(x = c("#3182bd","#31a354"),each = 2),
+       pch = rep(x = c(1,4),2),
+       pt.lwd = 2, box.lwd = 0.5)
+dev.off()
+
+
+opc12_10c <- opc12$log2[,9+which(opc12$info$type == "ten-cell")]
+opc12_10c <- opc12_10c[rowSums(opc12_10c > 0) > 7,]
+opc12_10c_umap <- uwot::umap(X = t(opc12_10c),n_neighbors = 7)
+plot(opc12_10c_umap)
+pdf(file = "./plots/umap_10c_12dpi.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-4,4),
+     ylim = c(-6,4),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(opc12_10c_umap[opc12$info$sex[opc12$info$type == "ten-cell"] == "female",],pch = 1,lwd = 2,col = "#3182bd")
+points(opc12_10c_umap[opc12$info$sex[opc12$info$type == "ten-cell"] == "male",],pch = 4,lwd = 2,col = "#3182bd")
+legend(x = "topright",
+       legend = c("12 dpi Female","12 dpi Male"),
+       col = rep(x = "#3182bd",2),
+       pch = c(1,4),
+       pt.lwd = 2, box.lwd = 0.5)
+dev.off()
+
+
+opc90_10c <- opc90$log2[,9+which(opc90$info$type == "ten-cell")]
+opc90_10c <- opc90_10c[rowSums(opc90_10c > 0) > 7,]
+opc90_10c_umap <- uwot::umap(X = t(opc90_10c),n_neighbors = 7)
+plot(opc90_10c_umap)
+pdf(file = "./plots/umap_10c_90dpi.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-2,2),
+     ylim = c(-4,4),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(opc90_10c_umap[opc90$info$sex[opc90$info$type == "ten-cell"] == "female",],pch = 1,lwd = 2,col = "#31a354")
+points(opc90_10c_umap[opc90$info$sex[opc90$info$type == "ten-cell"] == "male",],pch = 4,lwd = 2,col = "#31a354")
+legend(x = "topright",
+       legend = c("90 dpi Female","90 dpi Male"),
+       col = rep(x = "#31a354",2),
+       pch = c(1,4),
+       pt.lwd = 2, box.lwd = 0.5)
+dev.off()

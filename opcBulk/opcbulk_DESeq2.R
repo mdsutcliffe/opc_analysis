@@ -194,7 +194,8 @@ res_plus_150 <- runDESeq2(rsem = bulk_collapse,info = bulk_collapse.info,day = 1
 
 
 # Enrichment
-
+library(msigdbr)
+library(hypeR)
 msigdb_path <- msigdb_download_all(species = "Mus musculus",output_dir = "./external")
 hallmark <- msigdb_fetch(msigdb_path = msigdb_path,symbol = "H")
 
