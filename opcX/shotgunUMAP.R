@@ -128,22 +128,41 @@ legend(x = "topright",
 dev.off()
 
 
-opc12_10c <- opc12$log2[opc12$log2$symbol %in% intersect(row.names(opc12F),row.names(opc12M)),9+which(opc12$info$type == "ten-cell")]
+opc12_10c <- opc12$log2[opc12$log2$symbol %in% intersect(row.names(opc12F),row.names(opc12M)),c(3,9+which(opc12$info$type == "ten-cell"))]
 # opc12_10c <- opc12_10c[opc12$log,]
-opc12_10c_umap <- uwot::umap(X = t(opc12_10c),n_neighbors = 7)
+set.seed(12)
+
+tempumap <- t(opc12_10c)
+colnames(tempumap) <- tempumap[1,]
+tempumap <- apply(tempumap,2,as.numeric)
+tempumap <- as.matrix(tempumap[2:nrow(tempumap),])
+
+opc12_10c_umap <- uwot::umap(X = tempumap,n_neighbors = 7,)
+opc12_10c_umap <- umapr::umap(data = tempumap,n_neighbors = 7)
 plot(opc12_10c_umap)
-pdf(file = "./plots/umap_10c_12dpi.pdf",width = 3,height = 3,pointsize = 6)
-par(mar = c(4,4,1,1))
+umapr::run_umap_shiny(cbind(tempumap[,c("Pdgfra")],opc12_10c_umap))
+
+xx <- cbind(tempumap[,"Pdgfra"],opc12_10c_umap)
+umapr::run_umap_shiny(xx)
+
+yy <- umapr::umap(data = tempumap,n_neighbors = 7)
+umapr::run_umap_shiny(yy)
+embedding <- yy
+umap1_cors <- apply(embedding[,1:(ncol(embedding)-2)],2,function(x) cor(x,embedding[,(ncol(embedding)-1)]))
+umap2_cors <- apply(embedding[,1:(ncol(embedding)-2)],2,function(x) cor(x,embedding[,(ncol(embedding))]))
+
+pdf(file = "./plots/umap_10c_12dpi.pdf",width = 2.25,height = 2,pointsize = 6,useDingbats = F)
+par(mar = c(3.1,3.1,1,1),mgp = c(2,1,0))
 plot(x = c(),y = c(),
      xlim = c(-6,6),
-     ylim = c(-4,6),
+     ylim = c(-8,8),
      xlab = "UMAP-1",
      ylab = "UMAP-2",
      xaxs = "i",
      yaxs = "i",
      axes = F)
 axis(side = 1)
-axis(side = 2,las = 1)
+axis(side = 2,las = 1,at = seq(-8,8,4))
 points(opc12_10c_umap[opc12$info$sex[opc12$info$type == "ten-cell"] == "female",],pch = 1,lwd = 2,col = "#3182bd")
 points(opc12_10c_umap[opc12$info$sex[opc12$info$type == "ten-cell"] == "male",],pch = 4,lwd = 2,col = "#3182bd")
 legend(x = "topright",
@@ -153,10 +172,40 @@ legend(x = "topright",
        pt.lwd = 2, box.lwd = 0.5)
 dev.off()
 
+library(RColorBrewer)
+cb <- brewer.pal(11,"RdBu")
+colPal <- colorRampPalette(colors = c())
+pdf(file = "./plots/umap_10c_12dpi.pdf",width = 2.25,height = 2,pointsize = 6,useDingbats = F)
+par(mar = c(3.1,3.1,1,1),mgp = c(2,1,0))
+plot(x = c(),y = c(),
+     xlim = c(-12,6),
+     ylim = c(-8,8),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1,at = seq(-8,8,4))
+points(opc12_10c_umap[opc12$info$sex[opc12$info$type == "ten-cell"] == "female",],pch = 1,lwd = 2,col = "#3182bd")
+points(opc12_10c_umap[opc12$info$sex[opc12$info$type == "ten-cell"] == "male",],pch = 4,lwd = 2,col = "#3182bd")
+
+points(opc12_10c_umap,
+       pch = c(1,4)[as.numeric(opc12$info$sex[opc12$info$type == "ten-cell"] == "female") + 1],
+       col = cb[as.numeric(cut(as.numeric(opc12_10c[opc12_10c$symbol == "Epha5",2:ncol(opc12_10c)]),breaks = 11))],
+       lwd = 4)
+legend(x = "topleft",legend = c("Low","","High"),col = cb[c(1,6,11)],fill = T)
 
 
+legend(x = "topright",
+       legend = c("12 dpi Female","12 dpi Male"),
+       col = rep(x = "#3182bd",2),
+       pch = c(1,4),
+       pt.lwd = 2, box.lwd = 0.5)
+dev.off()
 
 
+View(umap1_cors * umap2_cors)
 
 opc90_10c <- opc90$log2[opc90$log2$symbol %in% intersect(row.names(opc90F),row.names(opc90M)),9+which(opc90$info$type == "ten-cell")]
 # opc90_10c <- opc90_10c[rowSums(opc90_10c > 0) > 7,]
@@ -183,7 +232,7 @@ legend(x = "topright",
        pt.lwd = 2, box.lwd = 0.5)
 dev.off()
 
-
+uwot::
 
 
 
@@ -357,11 +406,20 @@ legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c
 dev.off()
 
 # Everything together, DE + union of M/F unique/rhegs
+source("./opcBulk/runDESeq2_opcBulk.R")
 allCommonGenes <- Reduce(union,list(opc12_rheg,opc12_uniqueF,opc12_uniqueM,
                                     opc90_rheg,opc90_uniqueF,opc90_uniqueM,
-                                    res_plus_12$genesDE,
-                                    res_plus_90$genesDE,
-                                    res_plus_150$genesDE))
+                                    bulk$deseq2$de12$genesDE,
+                                    bulk$deseq2$de90$genesDE,
+                                    bulk$deseq2$de150$genesDE))
+
+scale_bulk <- t(scale(t(cbind(data.frame(row.names = bulk$log2$symbol),bulk$log2[,10:ncol(bulk$log2)]))))
+scale_10c <- t(scale(t(cbind(data.frame(row.names = bulk$log2$symbol),opc12$log2[opc12$log2$chr != "ERCC",9 + which(opc12$info$type == "ten-cell")],opc90$log2[opc90$log2$chr != "ERCC",9 + which(opc90$info$type == "ten-cell")]))))
+
+opc_scale <- cbind(scale_bulk,scale_10c)
+opc_scale <- opc_scale[allCommonGenes,]
+opc_scale <- opc_scale[complete.cases(opc_scale),]
+
 
 opc <- cbind(data.frame(row.names = bulk$log2$symbol),
              bulk$log2[,10:ncol(bulk$log2)],
@@ -374,14 +432,14 @@ opc.info <- c(paste("bulk",bulk$info$day,bulk$info$genotype,sep = "_"),
               paste("opc90",opc90$info$type[opc90$info$type == "ten-cell"],sep = "_"))
 
 set.seed(0)
-opc_umap <- uwot::umap(X = t(opc),n_neighbors = 14)
+opc_umap <- uwot::umap(X = t(opc_scale),n_neighbors = 12)
 plot(opc_umap)
 
-pdf(file = "./plots/umap_all_de_rheg_unionMF.pdf",width = 3,height = 3,pointsize = 6)
+pdf(file = "./plots/umap_all_de_rheg_unionMF_scale.pdf",width = 3,height = 3,pointsize = 6)
 par(mar = c(4,4,1,1))
 plot(x = c(),y = c(),
-     xlim = c(-10,10),
-     ylim = c(-6,6),
+     xlim = c(-2,2),
+     ylim = c(-3,4),
      xlab = "UMAP-1",
      ylab = "UMAP-2",
      xaxs = "i",
@@ -391,8 +449,80 @@ axis(side = 1)
 axis(side = 2,las = 1)
 points(opc_umap[grepl(pattern = "WT",x = opc.info),],pch = 1,lwd = 0.5)
 points(opc_umap[grepl(pattern = "CKO",x = opc.info),],pch = 16)
+points(opc_umap[grepl(pattern = "150_CKO",x = opc.info),],pch = 17)
 
 points(opc_umap[grepl(pattern = "opc12",x = opc.info),],pch = 16,col = "#e41a1c")
 points(opc_umap[grepl(pattern = "opc90",x = opc.info),],pch = 16,col = "#377eb8")
+legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c-12dpi","10c-90dpi"),col = c("#000000","#000000","#e41a1c","#377eb8"),pch = c(1,16,16,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
+dev.off()
+
+
+
+
+
+
+allCommonGenes <- Reduce(union,list(opc12_rheg,
+                                    opc90_rheg,
+                                    bulk$deseq2$de12$genesDE,
+                                    bulk$deseq2$de90$genesDE,
+                                    bulk$deseq2$de150$genesDE))
+
+scale_bulk <- t(scale(t(cbind(data.frame(row.names = bulk$log2$symbol),bulk$log2[,10:ncol(bulk$log2)]))))
+scale_10c <- t(scale(t(cbind(data.frame(row.names = bulk$log2$symbol),opc12$log2[opc12$log2$chr != "ERCC",9 + which(opc12$info$type == "ten-cell")],opc90$log2[opc90$log2$chr != "ERCC",9 + which(opc90$info$type == "ten-cell")]))))
+
+opc_scale <- cbind(scale_bulk,scale_10c)
+opc_scale <- opc_scale[allCommonGenes,]
+opc_scale <- opc_scale[complete.cases(opc_scale),]
+
+
+opc <- cbind(data.frame(row.names = bulk$log2$symbol),
+             bulk$log2[,10:ncol(bulk$log2)],
+             opc12$log2[opc12$log2$chr != "ERCC",9 + which(opc12$info$type == "ten-cell")],
+             opc90$log2[opc90$log2$chr != "ERCC",9 + which(opc90$info$type == "ten-cell")])
+opc <- opc[allCommonGenes,]
+
+opc.info <- c(paste("bulk",bulk$info$day,bulk$info$genotype,sep = "_"),
+              paste("opc12",opc12$info$type[opc12$info$type == "ten-cell"],sep = "_"),
+              paste("opc90",opc90$info$type[opc90$info$type == "ten-cell"],sep = "_"))
+
+set.seed(0)
+opc_umap <- uwot::umap(X = t(opc_scale),n_neighbors = 12)
+plot(opc_umap)
+
+pdf(file = "./plots/umap_all_de_rhegsONLY_unionMF_scale.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = c(),y = c(),
+     xlim = c(-2,2),
+     ylim = c(-3,4),
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+axis(side = 1)
+axis(side = 2,las = 1)
+points(opc_umap[grepl(pattern = "WT",x = opc.info),],pch = 1,lwd = 0.5)
+points(opc_umap[grepl(pattern = "CKO",x = opc.info),],pch = 16)
+points(opc_umap[grepl(pattern = "150_CKO",x = opc.info),],pch = 17)
+
+points(opc_umap[grepl(pattern = "opc12",x = opc.info),],pch = 16,col = "#e41a1c")
+points(opc_umap[grepl(pattern = "opc90",x = opc.info),],pch = 16,col = "#377eb8")
+legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c-12dpi","10c-90dpi"),col = c("#000000","#000000","#e41a1c","#377eb8"),pch = c(1,16,16,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
+dev.off()
+
+pch_scale <- sapply(opc.info,function(x) switch(x,"opc12_ten-cell" = 16,"opc90_ten-cell" = 16,"bulk_12_WT" = 1,"bulk_90_WT" = 1,"bulk_150_WT" = 1,"bulk_12_CKO" = 16,"bulk_90_CKO" = 18,"bulk_150_CKO" = 8))
+col_scale <- sapply(opc.info,function(x) switch(x,"opc12_ten-cell" = "#e41a1c","opc90_ten-cell" = "#377eb8","bulk_12_WT" = "#000000","bulk_90_WT" = "#000000","bulk_150_WT" = "#000000","bulk_12_CKO" = "#000000","bulk_90_CKO" = "#000000","bulk_150_CKO" = "#000000"))
+pdf(file = "./plots/umap_all_de_rhegsONLY_unionMF_scale.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = opc_umap,
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     # xaxs = "i",
+     # yaxs = "i",
+     axes = F,
+     pch = pch_scale,
+     col = col_scale)
+axis(side = 1)
+axis(side = 2,las = 1)
 legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c-12dpi","10c-90dpi"),col = c("#000000","#000000","#e41a1c","#377eb8"),pch = c(1,16,16,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
 dev.off()

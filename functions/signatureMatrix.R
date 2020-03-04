@@ -1,3 +1,4 @@
+library(readxl)
 # Cibersort signature matrix
 signatureMatrix <- function(geneList = NULL,nGenesEach = 40,removeWholeCortex = TRUE,removeNFO = TRUE,oligoIndependence = TRUE) {
   
