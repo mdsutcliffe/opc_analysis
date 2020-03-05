@@ -22,8 +22,8 @@ cibersort_opc90 <- read.table(file = f.cibersort_opc90,header = T,sep = "\t")
 
 row.names(cibersort_opc90) <- cibersort_opc90$Mixture
 
-cibersort_opc90 <- cibersort_opc90[,2:(which(names(cibersort_opc90) == "P.value") - 1)] #/ cibersort_opc90$Absolute.score..sig.score.
-
+cibersort_opc90 <- cibersort_opc90[,2:(which(names(cibersort_opc90) == "P.value") - 1)]
+# cibersort_opc90 <- cibersort_opc90[,2:(which(names(cibersort_opc90) == "P.value") - 1)] / cibersort_opc90$Absolute.score..sig.score.
 # cibersort_opc90 <- cibersort_opc90[,2:(which(names(cibersort_opc90) == "P.value") - 1)] / colSums(opc90_mixture[opc90_mixture$symbol %in% signature$genes,2:ncol(opc90_mixture)])
 
 pdf(file = "./plots/cibersort_opc90.pdf",width = 3,height = 3,pointsize = 6,useDingbats = F)
@@ -33,7 +33,7 @@ title(xlab = "90 dpi ten-cell samples",mgp = c(0.5,0,0))
 legend(x = "topright",legend = names(cibersort_opc90),pch = 15,col = rev(brewer.pal(6,"Set1")),inset = c(-0.4,0))
 dev.off()
 
-colSums(opc90_mixture[opc90_mixture$symbol %in% signature$genes,2:ncol(opc90_mixture)])
+
 
 library(pheatmap)
 library(RColorBrewer)

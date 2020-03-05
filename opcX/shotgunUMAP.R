@@ -1,6 +1,6 @@
 # Throw everything into UMAP
 
-# library(umapr)
+library(umapr)
 library(uwot)
 
 source("./opcBulk/import_opcBulk.R")
@@ -510,19 +510,54 @@ points(opc_umap[grepl(pattern = "opc90",x = opc.info),],pch = 16,col = "#377eb8"
 legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c-12dpi","10c-90dpi"),col = c("#000000","#000000","#e41a1c","#377eb8"),pch = c(1,16,16,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
 dev.off()
 
-pch_scale <- sapply(opc.info,function(x) switch(x,"opc12_ten-cell" = 16,"opc90_ten-cell" = 16,"bulk_12_WT" = 1,"bulk_90_WT" = 1,"bulk_150_WT" = 1,"bulk_12_CKO" = 16,"bulk_90_CKO" = 18,"bulk_150_CKO" = 8))
+pch_scale <- sapply(opc.info,function(x) switch(x,"opc12_ten-cell" = 16,"opc90_ten-cell" = 16,"bulk_12_WT" = 1,"bulk_90_WT" = 0,"bulk_150_WT" = 2,"bulk_12_CKO" = 16,"bulk_90_CKO" = 15,"bulk_150_CKO" = 17))
 col_scale <- sapply(opc.info,function(x) switch(x,"opc12_ten-cell" = "#e41a1c","opc90_ten-cell" = "#377eb8","bulk_12_WT" = "#000000","bulk_90_WT" = "#000000","bulk_150_WT" = "#000000","bulk_12_CKO" = "#000000","bulk_90_CKO" = "#000000","bulk_150_CKO" = "#000000"))
-pdf(file = "./plots/umap_all_de_rhegsONLY_unionMF_scale.pdf",width = 3,height = 3,pointsize = 6)
+pdf(file = "./plots/umap_all_de_rhegs_unionMF_scale.pdf",width = 3,height = 3,pointsize = 6)
 par(mar = c(4,4,1,1))
 plot(x = opc_umap,
      xlab = "UMAP-1",
      ylab = "UMAP-2",
-     # xaxs = "i",
-     # yaxs = "i",
+     xlim = c(-2,2),
+     ylim = c(-3,3),
+     xaxs = "i",
+     yaxs = "i",
      axes = F,
      pch = pch_scale,
      col = col_scale)
 axis(side = 1)
 axis(side = 2,las = 1)
-legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c-12dpi","10c-90dpi"),col = c("#000000","#000000","#e41a1c","#377eb8"),pch = c(1,16,16,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
+# legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c-12dpi","10c-90dpi"),col = c("#000000","#000000","#e41a1c","#377eb8"),pch = c(1,16,16,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
+legend(x = "topleft",
+       legend = c("bulk12-WT","bulk90-WT","bulk150-WT","bulk12-CKO","bulk90-CKO","bulk150-CKO","10c-12dpi","10c-90dpi"),
+       col = c("#000000","#000000","#000000","#000000","#000000","#000000","#e41a1c","#377eb8"),
+       pch = c(1,0,2,16,15,17,16,16),
+       pt.lwd = 0.5,
+       box.lwd = 0.5)
+dev.off()
+
+
+set.seed(0)
+opc_umap <- uwot::umap(X = t(opc_scale),n_neighbors = 12)
+plot(opc_umap)
+pdf(file = "./plots/umap_all_de_rhegsONLY_unionMF_scale.pdf",width = 3,height = 3,pointsize = 6)
+par(mar = c(4,4,1,1))
+plot(x = opc_umap,
+     xlab = "UMAP-1",
+     ylab = "UMAP-2",
+     xlim = c(-3,5),
+     ylim = c(-2,2),
+     xaxs = "i",
+     yaxs = "i",
+     axes = F,
+     pch = pch_scale,
+     col = col_scale)
+axis(side = 1,at = seq(-3,5))
+axis(side = 2,las = 1)
+# legend(x = "topright",legend = c("bulk WT (all days)","bulk CKO (all days)","10c-12dpi","10c-90dpi"),col = c("#000000","#000000","#e41a1c","#377eb8"),pch = c(1,16,16,16),pt.lwd = c(0.5,0.5,0.5,0.5),box.lwd = 0.5)
+legend(x = "topright",
+       legend = c("bulk12-WT","bulk90-WT","bulk150-WT","bulk12-CKO","bulk90-CKO","bulk150-CKO","10c-12dpi","10c-90dpi"),
+       col = c("#000000","#000000","#000000","#000000","#000000","#000000","#e41a1c","#377eb8"),
+       pch = c(1,0,2,16,15,17,16,16),
+       pt.lwd = 0.5,
+       box.lwd = 0.5)
 dev.off()

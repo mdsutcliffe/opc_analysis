@@ -47,3 +47,19 @@ barplot(t(as.matrix(cibersort_150_wt)),ylab = "Fraction",names.arg = rep(x = "",
 title(xlab = "150 dpi WT bulk samples",mgp = c(0.5,0,0))
 legend(x = "topright",legend = names(cibersort_150_wt),pch = 15,col = rev(brewer.pal(6,"Set1")),inset = c(-0.4,0))
 dev.off()
+
+
+# Boxplots
+pdf(file = "./plots/cibersort_WT_150_boxplot.pdf",width = 2.5,height = 2,pointsize = 7,useDingbats = F)
+boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia"))],horizontal = T,las = 1,xlab = "Relative proportion",frame = F,xaxs = "i",yaxs = "i",axes = F,ylim = c(0,0.8),xlim = c(0.7,6.3),par(mar = c(3.1,4.6,0.5,1),mgp = c(2,1,0)),lwd = 0.5)
+axis(side = 1,at = seq(0,0.8,0.2),lwd = 0.5)
+axis(side = 2,at = seq(0,6)+0.5,labels = F,lwd = 0.5)
+axis(side = 2,at = seq(1,6),labels = rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia")),las = 1,tick = F,lwd = 0.5,par(mgp = c(0,0.2,0)))
+dev.off()
+
+pdf(file = "./plots/cibersort_WT_12_boxplot.pdf",width = 2.5,height = 2,pointsize = 7,useDingbats = F)
+boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia"))],horizontal = T,las = 1,xlab = "Relative proportion",frame = F,xaxs = "i",yaxs = "i",axes = F,ylim = c(0,0.8),xlim = c(0.7,5.3),par(mar = c(3.1,4.6,0.5,1),mgp = c(2,1,0)),lwd = 0.5)
+axis(side = 1,at = seq(0,0.8,0.2),lwd = 0.5)
+axis(side = 2,at = seq(0,5)+0.5,labels = F,lwd = 0.5)
+axis(side = 2,at = seq(1,5),labels = rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia")),las = 1,tick = F,lwd = 0.5,par(mgp = c(0,0.2,0)))
+dev.off()
