@@ -31,14 +31,33 @@ avg_vars_F <- data.frame(cbind(tencell_var = apply(X = tencell_var_F,MARGIN = 1,
 avg_vars_M <- data.frame(cbind(tencell_var = apply(X = tencell_var_M,MARGIN = 1,FUN = mean),pooled_var = apply(X = pooled_var_M,MARGIN = 1,FUN = mean)))
 
 avg_vars_F_sort <- avg_vars_F[order(avg_vars_F$tencell_var,decreasing = T),]
+avg_vars_M_sort <- avg_vars_M[order(avg_vars_M$tencell_var,decreasing = T),]
+
 
 c(rep(10585,16),ifelse(row.names(avg_vars_F_sort) %in% opc12_rheg,16,1))
-plot(x = c(1:10585,c(1:10585)[!(row.names(avg_vars_F_sort) %in% opc12_rheg)]),y = c(avg_vars_F_sort$pooled_var,avg_vars_F_sort$tencell_var[!(row.names(avg_vars_F_sort) %in% opc12_rheg)]),
-     col = c(rep("#00000020",10585),rep("#FC9272",count(!(row.names(avg_vars_F_sort) %in% opc12_rheg)))))
+
+pdf(file = "./plots/ranked_dispersion_opc12_final.pdf",width = 2.25,height = 2.75,pointsize = 7,useDingbats = F)
+par(mai = c(0.5,0.5,0,0),mfrow = c(2,1))
+plot(x = c(1:10585,c(1:10585)[!(row.names(avg_vars_M_sort) %in% opc12_rheg)]),
+     y = c(avg_vars_M_sort$pooled_var,avg_vars_M_sort$tencell_var[!(row.names(avg_vars_M_sort) %in% opc12_rheg)]),
+     col = c(rep("#00000020",10585),rep("#bcbddc",count(!(row.names(avg_vars_M_sort) %in% opc12_rheg)))),
+     frame = F,las = 1,axes = F,
+     xlim = c(1,10585),ylim = c(0,12),
+     xlab = "gene rank",
+     ylab = "Ranked dispersion")
+points(x = c(1:10585)[row.names(avg_vars_M_sort) %in% opc12_rheg],y = avg_vars_M_sort$tencell_var[row.names(avg_vars_M_sort) %in% opc12_rheg],
+       col = "#756bb1")
+axis(side = 1,at = c(1,10585))
+axis(side = 2,las = 1)
+plot(x = c(1:10585,c(1:10585)[!(row.names(avg_vars_F_sort) %in% opc12_rheg)]),
+     y = c(avg_vars_F_sort$pooled_var,avg_vars_F_sort$tencell_var[!(row.names(avg_vars_F_sort) %in% opc12_rheg)]),
+     col = c(rep("#00000020",10585),rep("#99d8c9",count(!(row.names(avg_vars_F_sort) %in% opc12_rheg)))),
+     frame = F,las = 1,axes = F,
+     xlim = c(1,10585),ylim = c(0,12),
+     xlab = "gene rank",
+     ylab = "Ranked dispersion")
 points(x = c(1:10585)[row.names(avg_vars_F_sort) %in% opc12_rheg],y = avg_vars_F_sort$tencell_var[row.names(avg_vars_F_sort) %in% opc12_rheg],
-       col = "#de2d26")
-
-
-             ifelse(row.names(avg_vars_F_sort) %in% opc12_rheg,"#FF0000","#FFAAAA")),
-     pch = c(rep(16,10585),ifelse(row.names(avg_vars_F_sort) %in% opc12_rheg,16,1)))
-
+       col = "#31a354")
+axis(side = 1,at = c(1,10585))
+axis(side = 2,las = 1)
+dev.off()

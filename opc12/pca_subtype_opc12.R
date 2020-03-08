@@ -35,6 +35,24 @@ points(x = opc12_projection1[opc12$info$type == "ten-cell" & opc12$info$sex == "
 legend(x = "topright",legend = c("Female","Male"),col = c("#e41a1c","#377eb8"),pch = c(16,16),pt.lwd = 0.5,box.lwd = 0.5)
 dev.off()
 
+pdf(file = "./plots/pc_opc12_final.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+par(mai = c(0.5,0.5,0,0))
+plot(x = opc12_projection1[opc12$info$type == "ten-cell"],
+     y = opc12_projection2[opc12$info$type == "ten-cell"],
+     # pch = ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "F8520",1,
+     #              ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "F8519",16,
+     #                     ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "M8516",0,15))),
+     pch = 16,
+     xlim = c(-60,60),
+     ylim = c(0,140),
+     frame = F,
+     xaxs = "i",
+     yaxs = "i",
+     xlab = "PC1",
+     ylab = "PC2",
+     las = 1,
+     lwd = 0.5)
+dev.off()
 
 
 pdf(file = "./plots/pc_opc12_descriptive_labels.pdf",width = 2,height = 1.75,pointsize = 6,useDingbats = F)
@@ -55,3 +73,8 @@ points(x = opc12_projection1[opc12$info$type == "ten-cell" & opc12$info$sex == "
        pch = 16,col = "#377eb8",lwd = 0.5)
 legend(x = "topright",legend = c("Female","Male"),pch = c(16,16),col = c("#e41a1c","#377eb8"),pt.lwd = 0.5,box.lwd = 0.5)
 dev.off()
+
+
+# opc12_ml <- 
+write.table(x = t(c("PC1",as.numeric(exp(opc12_projection1[opc12$info$type == "ten-cell"])))),file = "./temp/opc12_projection1_exp.tsv",quote = F,sep = "\t",row.names = F,col.names = F)
+write.table(x = t(c("PC1",as.numeric(opc12_projection1[opc12$info$type == "ten-cell"] + 60))),file = "./temp/opc12_projection1_2_plus.tsv",quote = F,sep = "\t",row.names = F,col.names = F)

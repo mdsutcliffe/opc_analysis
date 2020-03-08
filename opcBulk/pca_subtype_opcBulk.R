@@ -16,6 +16,46 @@ bulk_pc2 <- apply(X = bulk_pc[,10:ncol(bulk_pc)],MARGIN = 2,FUN = function(x) pc
 bulk_projection1 <- colSums(x = bulk_pc1,na.rm = T)
 bulk_projection2 <- colSums(x = bulk_pc2,na.rm = T)
 
+
+pdf(file = "./plots/pc_150_final.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+par(mai = c(0.5,0.5,0,0))
+plot(x = bulk_projection1[bulk$info$day == 150],
+     y = bulk_projection2[bulk$info$day == 150],
+     pch = ifelse(bulk$info$genotype[bulk$info$day == 150] == "WT",1,16),
+     xlim = c(-60,60),
+     ylim = c(0,140),
+     frame = F,
+     xaxs = "i",
+     yaxs = "i",
+     xlab = "PC1",
+     ylab = "PC2",
+     las = 1,
+     lwd = 0.5)
+legend(x = "topright",legend = c("WT","N1P"),pch = c(1,16),pt.lwd = 0.5,box.lwd = 0.5)
+dev.off()
+
+
+
+pdf(file = "./plots/pc_12_final.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+par(mai = c(0.5,0.5,0,0))
+plot(x = bulk_projection1[bulk$info$day == 12],
+     y = bulk_projection2[bulk$info$day == 12],
+     pch = ifelse(bulk$info$genotype[bulk$info$day == 12] == "WT",1,16),
+     xlim = c(-60,60),
+     ylim = c(0,140),
+     frame = F,
+     xaxs = "i",
+     yaxs = "i",
+     xlab = "PC1",
+     ylab = "PC2",
+     las = 1,
+     lwd = 0.5)
+legend(x = "topright",legend = c("WT","N1P"),pch = c(1,16),pt.lwd = 0.5,box.lwd = 0.5)
+dev.off()
+
+
+
+
 pdf(file = "./plots/pc_12.pdf",width = 2,height = 2,pointsize = 6,useDingbats = F)
 par(mar=c(3.25,3.25,1,1),mgp = c(2.25,1,0))
 plot(x = c(),y = c(),

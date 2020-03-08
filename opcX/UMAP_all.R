@@ -362,3 +362,90 @@ plot(x = embedding_umap[umap_all.info == "opc12" | umap_all.info == "opc90",],
      xlim = c(-3,3),ylim = c(-3,3))
 legend(x = "bottomright",legend = c("12 dpi","90 dpi"),pch = c(1,16))
 dev.off()
+
+
+# clustering bulk 90
+
+cb90 <- embedding_umap[umap_all.info == "bulk90_CKO",]
+km90 <- kmeans(x = cb90,centers = 2)
+plot(x = embedding_umap[umap_all.info == "bulk90_WT",],
+     pch = pch_umap[umap_all.info == "bulk90_WT"],
+     col = col_umap[umap_all.info == "bulk90_WT"],
+     xlab = "UMAP-1",ylab = "UMAP-2",
+     frame = F,
+     las = 1,
+     xlim = c(-3,3),ylim = c(-3,3))
+points(x = cb90,
+       pch = km90$cluster+15)
+
+
+
+
+
+
+
+plot(x = embedding_umap[umap_all.info == "opc12" | umap_all.info == "opc90",],
+     pch = c(rep(1,56),rep(16,56)),
+     #col = col_umap[umap_all.info == "opc12" | umap_all.info == "opc90"],
+     xlab = "UMAP-1",ylab = "UMAP-2",
+     frame = F,
+     las = 1,
+     xlim = c(-3,3),ylim = c(-3,3))
+
+pch_umap <- c(16,1,16,1,16,1,16,16)[as.numeric(factor(umap_all.info))]
+{
+  pdf(file = "./plots/umap_all_nN_20_bulk150_final.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F)
+  par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
+  plot(x = embedding_umap[umap_all.info == "bulk150_WT" | umap_all.info == "bulk150_CKO",],
+       pch = pch_umap[umap_all.info == "bulk150_WT" | umap_all.info == "bulk150_CKO"],
+       col = col_umap[umap_all.info == "bulk150_WT" | umap_all.info == "bulk150_CKO"],
+       xlab = "UMAP-1",ylab = "UMAP-2",
+       frame = F,
+       las = 1,xaxs = "i",yaxs = "i",
+       xlim = c(-3,3),ylim = c(-3,3),lwd = 0.5)
+  lines(x = c(median(embedding_umap[umap_all.info == "bulk150_WT",1]),median(embedding_umap[umap_all.info == "bulk150_CKO",1])),
+         y = c(median(embedding_umap[umap_all.info == "bulk150_WT",2]),median(embedding_umap[umap_all.info == "bulk150_CKO",2])))
+  legend(x = "topright",legend = c("WT","N1P"),pch = c(1,16),pt.lwd = 0.5)
+  dev.off()
+  
+  pdf(file = "./plots/umap_all_nN_20_bulk12_final.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F)
+  par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
+  plot(x = embedding_umap[umap_all.info == "bulk12_WT" | umap_all.info == "bulk12_CKO",],
+       pch = pch_umap[umap_all.info == "bulk12_WT" | umap_all.info == "bulk12_CKO"],
+       col = col_umap[umap_all.info == "bulk12_WT" | umap_all.info == "bulk12_CKO"],
+       xlab = "UMAP-1",ylab = "UMAP-2",
+       frame = F,
+       las = 1,xaxs = "i",yaxs = "i",
+       xlim = c(-3,3),ylim = c(-3,3),lwd = 0.5)
+  lines(x = c(median(embedding_umap[umap_all.info == "bulk12_WT",1]),median(embedding_umap[umap_all.info == "bulk12_CKO",1])),
+        y = c(median(embedding_umap[umap_all.info == "bulk12_WT",2]),median(embedding_umap[umap_all.info == "bulk12_CKO",2])))
+  legend(x = "topright",legend = c("WT","N1P"),pch = c(1,16),pt.lwd = 0.5)
+  dev.off()
+  
+  pdf(file = "./plots/umap_all_nN_20_bulk90_final.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F)
+  par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
+  plot(x = embedding_umap[umap_all.info == "bulk90_WT" | umap_all.info == "bulk90_CKO",],
+       pch = pch_umap[umap_all.info == "bulk90_WT" | umap_all.info == "bulk90_CKO"],
+       col = col_umap[umap_all.info == "bulk90_WT" | umap_all.info == "bulk90_CKO"],
+       xlab = "UMAP-1",ylab = "UMAP-2",
+       frame = F,
+       las = 1,xaxs = "i",yaxs = "i",
+       xlim = c(-3,3),ylim = c(-3,3),lwd = 0.5)
+  lines(x = c(median(embedding_umap[umap_all.info == "bulk90_WT",1]),median(embedding_umap[umap_all.info == "bulk90_CKO",1][km90$cluster == 1])),
+        y = c(median(embedding_umap[umap_all.info == "bulk90_WT",2]),median(embedding_umap[umap_all.info == "bulk90_CKO",2][km90$cluster == 1])))
+  lines(x = c(median(embedding_umap[umap_all.info == "bulk90_WT",1]),median(embedding_umap[umap_all.info == "bulk90_CKO",1][km90$cluster == 2])),
+        y = c(median(embedding_umap[umap_all.info == "bulk90_WT",2]),median(embedding_umap[umap_all.info == "bulk90_CKO",2][km90$cluster == 2])))
+  legend(x = "topright",legend = c("WT","N1P"),pch = c(1,16),pt.lwd = 0.5)
+  dev.off()
+  
+  pdf(file = "./plots/umap_all_nN_20_tencell_final.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F)
+  par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
+  plot(x = embedding_umap[umap_all.info == "opc12" | umap_all.info == "opc90",],
+       pch = c(rep(1,56),rep(16,56)),
+       xlab = "UMAP-1",ylab = "UMAP-2",
+       frame = F,
+       las = 1,xaxs = "i",yaxs = "i",
+       xlim = c(-3,3),ylim = c(-3,3),lwd = 0.5)
+  legend(x = "topright",legend = c("12 dpi","90 dpi"),pch = c(1,16),pt.lwd = 0.5)
+  dev.off()
+}
