@@ -28,7 +28,7 @@ cibersort_opc90 <- cibersort_opc90[,2:(which(names(cibersort_opc90) == "P.value"
 
 pdf(file = "./plots/cibersort_opc90.pdf",width = 3,height = 3,pointsize = 6,useDingbats = F)
 par(mar = c(1.8,4,1,8),mgp = c(2.9,1,0),xpd = T)
-barplot(t(as.matrix(cibersort_opc90[order(cibersort_opc90$OPC,decreasing = T),])),ylab = "Fraction",names.arg = rep(x = "",nrow(cibersort_opc90)),col = rev(brewer.pal(6,"Set1")),las = 1)
+barplot(t(as.matrix(cibersort_opc90[order(cibersort_opc90$OPC,decreasing = T),c("OPC","Astrocyte","Neuron","MO","Microglia","Endothelial")])),ylab = "Fraction",names.arg = rep(x = "",nrow(cibersort_opc90)),col = rev(brewer.pal(6,"Set1")),las = 1)
 title(xlab = "90 dpi ten-cell samples",mgp = c(0.5,0,0))
 legend(x = "topright",legend = names(cibersort_opc90),pch = 15,col = rev(brewer.pal(6,"Set1")),inset = c(-0.4,0))
 dev.off()

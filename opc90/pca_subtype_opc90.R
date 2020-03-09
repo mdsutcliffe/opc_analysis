@@ -1,27 +1,27 @@
 # PCA subtype analysis from PMID 28697342
 
-source("./opc12/import_opc12.R")
+source("./opc90/import_opc90.R")
 
 load("./build/orthologs.RData")
 
 pc <- read.csv("./external/219026_2_supp_5782669_py1bdv.csv",stringsAsFactors = F)[,1:10]
 
-opc12_pc <- cbind(opc12$tpm[,1:9],log2(opc12$tpm[,10:ncol(opc12$tpm)] / 100 + 1))
+opc90_pc <- cbind(opc90$tpm[,1:9],log2(opc90$tpm[,10:ncol(opc90$tpm)] / 100 + 1))
 
-opc12_pc$symbol <- orthologs$HGNC.symbol[match(x = opc12_pc$symbol,table = orthologs$MGI.symbol)]
+opc90_pc$symbol <- orthologs$HGNC.symbol[match(x = opc90_pc$symbol,table = orthologs$MGI.symbol)]
 
-opc12_pc <- opc12_pc[match(x = pc$Gene,table = opc12_pc$symbol),]
+opc90_pc <- opc90_pc[match(x = pc$Gene,table = opc90_pc$symbol),]
 
-opc12_pc1 <- apply(X = opc12_pc[,10:ncol(opc12_pc)],MARGIN = 2,FUN = function(x) pc$PC1 * x)
-opc12_pc2 <- apply(X = opc12_pc[,10:ncol(opc12_pc)],MARGIN = 2,FUN = function(x) pc$PC2 * (x - (pc$PC1 * x)))
+opc90_pc1 <- apply(X = opc90_pc[,10:ncol(opc90_pc)],MARGIN = 2,FUN = function(x) pc$PC1 * x)
+opc90_pc2 <- apply(X = opc90_pc[,10:ncol(opc90_pc)],MARGIN = 2,FUN = function(x) pc$PC2 * (x - (pc$PC1 * x)))
 
-opc12_projection1 <- colSums(x = opc12_pc1,na.rm = T)
-opc12_projection2 <- colSums(x = opc12_pc2,na.rm = T)
+opc90_projection1 <- colSums(x = opc90_pc1,na.rm = T)
+opc90_projection2 <- colSums(x = opc90_pc2,na.rm = T)
 
-pdf(file = "./plots/pca_subtype_opc12.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+pdf(file = "./plots/pca_subtype_opc90.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
 par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0),xpd = T)
-plot(x = opc12_projection1[opc12$info$type == "ten-cell"],
-     y = opc12_projection2[opc12$info$type == "ten-cell"],
+plot(x = opc90_projection1[opc90$info$type == "ten-cell"],
+     y = opc90_projection2[opc90$info$type == "ten-cell"],
      pch = 16,
      xlim = c(-60,60),
      ylim = c(0,140),

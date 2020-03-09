@@ -62,7 +62,7 @@ runDESeq2 <- function() {
 
 bulk$deseq2 <- runDESeq2()
 
-# Plots -----
+# Extract fold changes and p-values
 
 fc_12 <- bulk$deseq2$de12$results$log2FoldChange[!is.na(bulk$deseq2$de12$results$pvalue)]
 fc_90 <- bulk$deseq2$de90$results$log2FoldChange[!is.na(bulk$deseq2$de90$results$pvalue)]
@@ -72,122 +72,196 @@ p_12 <- bulk$deseq2$de12$results$padj[!is.na(bulk$deseq2$de12$results$pvalue)]
 p_90 <- bulk$deseq2$de90$results$padj[!is.na(bulk$deseq2$de90$results$pvalue)]
 p_150 <- bulk$deseq2$de150$results$padj[!is.na(bulk$deseq2$de150$results$pvalue)]
 
-# Volcano plots
-{
-  col_volcano <- ifelse(p_12 >= 0.05,"#bdbdbdbd",ifelse(fc_12 > 0,"#b2182bbd","#2166acbd"))
+# save.image(file = "./build/bulk_DESeq2_results.RData")
 
-  pdf(file = "./plots/volcano_bulk12.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
-  par(mar = c(3.3,3.3,0.5,0.5),mgp = c(2.2,1,0))
-  plot(x = fc_12[p_12 >= 0.05],y = -log10(x = p_12[p_12 >= 0.05]),
-       col = "#bdbdbdbd",
-       xlim = c(-10,10),ylim = c(0,100),
-       xlab = "Log2FC",ylab = "Log10pvalue",frame = F,las = 1,
-       xaxs = "i",yaxs = "i",lwd = 0.5)
-  points(x = fc_12[p_12 < 0.05 & fc_12 < 0],y = -log10(x = p_12[p_12 < 0.05 & fc_12 < 0]),
-         col = "#2166acbd")
-  points(x = fc_12[p_12 < 0.05 & fc_12 > 0],y = -log10(x = p_12[p_12 < 0.05 & fc_12 > 0]),
-         col = "#b2182bbd")
-  dev.off()
-  
-  pdf(file = "./plots/volcano_bulk150.pdf",width = 3,height = 1.5,pointsize = 7,useDingbats = F)
-  par(mai = c(0.5,0.5,0,0))
-  plot(x = fc_150[p_150 >= 0.05],y = -log10(x = p_150[p_150 >= 0.05]),
-       col = "#bdbdbda0",
-       xlim = c(-10,10),ylim = c(0,100),
-       xlab = "Log2FC",ylab = "Log10pvalue",frame = F,las = 1,
-       xaxs = "i",yaxs = "i",lwd = 0.5)
-  points(x = fc_150[p_150 < 0.05 & fc_150 < 0],y = -log10(x = p_150[p_150 < 0.05 & fc_150 < 0]),
-         col = "#2166aca0",lwd = 0.5)
-  points(x = fc_150[p_150 < 0.05 & fc_150 > 0],y = -log10(x = p_150[p_150 < 0.05 & fc_150 > 0]),
-         col = "#b2182ba0",lwd = 0.5)
-  dev.off()
-  
-  pdf(file = "./plots/volcano_bulk12.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
-  par(mai = c(0.5,0.5,0,0))
-  plot(x = fc_12[p_12 >= 0.05],y = -log10(x = p_12[p_12 >= 0.05]),
-       col = "#bdbdbda0",
-       xlim = c(-10,10),ylim = c(0,100),
-       xlab = "Log2FC",ylab = "Log10pvalue",frame = F,las = 1,
-       xaxs = "i",yaxs = "i",lwd = 0.5)
-  points(x = fc_12[p_12 < 0.05 & fc_12 < 0],y = -log10(x = p_12[p_12 < 0.05 & fc_12 < 0]),
-         col = "#2166aca0",lwd = 0.5)
-  points(x = fc_12[p_12 < 0.05 & fc_12 > 0],y = -log10(x = p_12[p_12 < 0.05 & fc_12 > 0]),
-         col = "#b2182ba0",lwd = 0.5)
-  dev.off()
-  
-  pdf(file = "./plots/volcano_bulk90.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
-  par(mar = c(3.3,3.3,0.5,0.5),mgp = c(2.2,1,0))
-  plot(x = fc_90[p_90 >= 0.05],y = -log10(x = p_90[p_90 >= 0.05]),
+# bulk150 volcano plot - horizontally stretched
+pdf(file = "./plots/volcano_bulk150_stretch.pdf",width = 3,height = 1.5,pointsize = 7,useDingbats = F)
+par(mai = c(0.25,0,0,0),mgp = c(1.6,0.6,0))
+plot(x = fc_150[p_150 >= 0.05],
+     y = -log10(x = p_150[p_150 >= 0.05]),
+     col = "#bdbdbda0",
+     xlim = c(-10,10),
+     ylim = c(0,100),
+     xlab = "Log2 fold change",
+     ylab = NA,
+     frame = F,
+     axes = F,
+     xaxs = "i",
+     yaxs = "i",
+     lwd = 0.5)
+axis(side = 1,lwd = 0.5)
+axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
+points(x = fc_150[p_150 < 0.05 & fc_150 < 0],
+       y = -log10(x = p_150[p_150 < 0.05 & fc_150 < 0]),
+       col = "#2166aca0",
+       lwd = 0.5)
+points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
+       y = -log10(x = p_150[p_150 < 0.05 & fc_150 > 0]),
+       col = "#b2182ba0",
+       lwd = 0.5)
+text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
+dev.off()
+
+# bulk150 volcano plot
+pdf(file = "./plots/volcano_bulk150.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
+plot(x = fc_150[p_150 >= 0.05],
+     y = -log10(x = p_150[p_150 >= 0.05]),
+     col = "#bdbdbda0",
+     xlim = c(-10,10),
+     ylim = c(0,100),
+     xlab = "Log2 fold change",
+     ylab = NA,
+     frame = F,
+     axes = F,
+     xaxs = "i",
+     yaxs = "i",
+     lwd = 0.5)
+axis(side = 1,lwd = 0.5)
+axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
+points(x = fc_150[p_150 < 0.05 & fc_150 < 0],
+       y = -log10(x = p_150[p_150 < 0.05 & fc_150 < 0]),
+       col = "#2166aca0",
+       lwd = 0.5)
+points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
+       y = -log10(x = p_150[p_150 < 0.05 & fc_150 > 0]),
+       col = "#b2182ba0",
+       lwd = 0.5)
+text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
+dev.off()
+
+# bulk12 volcano plot
+pdf(file = "./plots/volcano_bulk12.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
+plot(x = fc_12[p_12 >= 0.05],
+     y = -log10(x = p_12[p_12 >= 0.05]),
+     col = "#bdbdbda0",
+     xlim = c(-10,10),
+     ylim = c(0,100),
+     xlab = "Log2 fold change",
+     ylab = NA,
+     frame = F,
+     axes = F,
+     xaxs = "i",
+     yaxs = "i",
+     lwd = 0.5)
+axis(side = 1,lwd = 0.5)
+axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
+points(x = fc_12[p_12 < 0.05 & fc_12 < 0],
+       y = -log10(x = p_12[p_12 < 0.05 & fc_12 < 0]),
+       col = "#2166aca0",
+       lwd = 0.5)
+points(x = fc_12[p_12 < 0.05 & fc_12 > 0],
+       y = -log10(x = p_12[p_12 < 0.05 & fc_12 > 0]),
+       col = "#b2182ba0",
+       lwd = 0.5)
+text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
+dev.off()
+
+# bulk90 volcano plot
+pdf(file = "./plots/volcano_bulk90.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
+plot(x = fc_90[p_90 >= 0.05],
+     y = -log10(x = p_90[p_90 >= 0.05]),
+     col = "#bdbdbda0",
+     xlim = c(-10,10),
+     ylim = c(0,100),
+     xlab = "Log2 fold change",
+     ylab = NA,
+     frame = F,
+     axes = F,
+     xaxs = "i",
+     yaxs = "i",
+     lwd = 0.5)
+axis(side = 1,lwd = 0.5)
+axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
+points(x = fc_90[p_90 < 0.05 & fc_90 < 0],
+       y = -log10(x = p_90[p_90 < 0.05 & fc_90 < 0]),
+       col = "#2166aca0",
+       lwd = 0.5)
+points(x = fc_90[p_90 < 0.05 & fc_90 > 0],
+       y = -log10(x = p_90[p_90 < 0.05 & fc_90 > 0]),
+       col = "#b2182ba0",
+       lwd = 0.5)
+text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
+dev.off()
+
+
+
+
+pdf(file = "./plots/volcano_bulk90.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+par(mar = c(3.3,3.3,0.5,0.5),mgp = c(2.2,1,0))
+plot(x = fc_90[p_90 >= 0.05],y = -log10(x = p_90[p_90 >= 0.05]),
+     col = "#bdbdbd",
+     xlim = c(-10,10),ylim = c(0,100),
+     xlab = "Log2FC",ylab = "Log10pvalue",frame = F,las = 1,
+     xaxs = "i",yaxs = "i",lwd = 0.5)
+points(x = fc_90[p_90 < 0.05 & fc_90 < 0],y = -log10(x = p_90[p_90 < 0.05 & fc_90 < 0]),
+       col = "#2166ac")
+points(x = fc_90[p_90 < 0.05 & fc_90 > 0],y = -log10(x = p_90[p_90 < 0.05 & fc_90 > 0]),
+       col = "#b2182b")
+dev.off()
+
+
+
+
+
+
+pdf(file = "./plots/volcano_bulk90.pdf",width = 2,height = 2,pointsize = 6,useDingbats = F)
+par(mar=c(3.6,3.6,0.5,0.5))
+plot(x = c(),y = c(),
+     xlim = c(-10,10),ylim = c(0,60),
+     xlab = "",ylab = "",
+     axes = F,xaxs = "i",yaxs = "i")
+axis(side = 1,lwd = 0.5)
+axis(side = 2,lwd = 0.5,las = 1)
+points(x = fc_90[p_90 >= 0.05],
+       y = -log(x = p_90[p_90 >= 0.05],base = 10),
        col = "#bdbdbd",
-       xlim = c(-10,10),ylim = c(0,100),
-       xlab = "Log2FC",ylab = "Log10pvalue",frame = F,las = 1,
-       xaxs = "i",yaxs = "i",lwd = 0.5)
-  points(x = fc_90[p_90 < 0.05 & fc_90 < 0],y = -log10(x = p_90[p_90 < 0.05 & fc_90 < 0]),
-         col = "#2166ac")
-  points(x = fc_90[p_90 < 0.05 & fc_90 > 0],y = -log10(x = p_90[p_90 < 0.05 & fc_90 > 0]),
-         col = "#b2182b")
-  dev.off()
-  
-  
-  
-  
-  
+       pch = 16)
+points(x = fc_90[p_90 < 0.05 & fc_90 > 0],
+       y = -log(x = p_90[p_90 < 0.05 & fc_90 > 0],base = 10),
+       col = "#de2d26",
+       pch = 16)
+points(x = fc_90[p_90 < 0.05 & fc_90 < 0],
+       y = -log(x = p_90[p_90 < 0.05 & fc_90 < 0],base = 10),
+       col = "#3182bd",
+       pch = 16)
+legend(x = "topright",
+       legend = c("Increased","Decreased"),
+       col = c("#de2d26","#3182bd"),pch=c(16,16),box.lwd = 0.5)
+title(xlab = expression("Log"[2]*" fold change"),
+      ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
+      mgp = c(2.5,1,0))
+dev.off()
 
-  pdf(file = "./plots/volcano_bulk90.pdf",width = 2,height = 2,pointsize = 6,useDingbats = F)
-  par(mar=c(3.6,3.6,0.5,0.5))
-  plot(x = c(),y = c(),
-       xlim = c(-10,10),ylim = c(0,60),
-       xlab = "",ylab = "",
-       axes = F,xaxs = "i",yaxs = "i")
-  axis(side = 1,lwd = 0.5)
-  axis(side = 2,lwd = 0.5,las = 1)
-  points(x = fc_90[p_90 >= 0.05],
-         y = -log(x = p_90[p_90 >= 0.05],base = 10),
-         col = "#bdbdbd",
-         pch = 16)
-  points(x = fc_90[p_90 < 0.05 & fc_90 > 0],
-         y = -log(x = p_90[p_90 < 0.05 & fc_90 > 0],base = 10),
-         col = "#de2d26",
-         pch = 16)
-  points(x = fc_90[p_90 < 0.05 & fc_90 < 0],
-         y = -log(x = p_90[p_90 < 0.05 & fc_90 < 0],base = 10),
-         col = "#3182bd",
-         pch = 16)
-  legend(x = "topright",
-         legend = c("Increased","Decreased"),
-         col = c("#de2d26","#3182bd"),pch=c(16,16),box.lwd = 0.5)
-  title(xlab = expression("Log"[2]*" fold change"),
-        ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
-        mgp = c(2.5,1,0))
-  dev.off()
-
-  pdf(file = "./plots/volcano_bulk150.pdf",width = 2,height = 2,pointsize = 6,useDingbats = F)
-  par(mar=c(3.6,3.6,0.5,0.5))
-  plot(x = c(),y = c(),
-       xlim = c(-10,10),ylim = c(0,100),
-       xlab = "",ylab = "",
-       axes = F,xaxs = "i",yaxs = "i")
-  axis(side = 1,lwd = 0.5)
-  axis(side = 2,lwd = 0.5,las = 1)
-  points(x = fc_150[p_150 >= 0.05],
-         y = -log(x = p_150[p_150 >= 0.05],base = 10),
-         col = "#bdbdbd",
-         pch = 16)
-  points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
-         y = -log(x = p_150[p_150 < 0.05 & fc_150 > 0],base = 10),
-         col = "#de2d26",
-         pch = 16)
-  points(x = fc_150[p_150 < 0.05 & fc_150 < 0],
-         y = -log(x = p_150[p_150 < 0.05 & fc_150 < 0],base = 10),
-         col = "#3182bd",
-         pch = 16)
-  legend(x = "topright",
-         legend = c("Increased","Decreased"),
-         col = c("#de2d26","#3182bd"),pch=c(16,16),box.lwd = 0.5)
-  title(xlab = expression("Log"[2]*" fold change"),
-        ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
-        mgp = c(2.5,1,0))
-  dev.off()
+pdf(file = "./plots/volcano_bulk150.pdf",width = 2,height = 2,pointsize = 6,useDingbats = F)
+par(mar=c(3.6,3.6,0.5,0.5))
+plot(x = c(),y = c(),
+     xlim = c(-10,10),ylim = c(0,100),
+     xlab = "",ylab = "",
+     axes = F,xaxs = "i",yaxs = "i")
+axis(side = 1,lwd = 0.5)
+axis(side = 2,lwd = 0.5,las = 1)
+points(x = fc_150[p_150 >= 0.05],
+       y = -log(x = p_150[p_150 >= 0.05],base = 10),
+       col = "#bdbdbd",
+       pch = 16)
+points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
+       y = -log(x = p_150[p_150 < 0.05 & fc_150 > 0],base = 10),
+       col = "#de2d26",
+       pch = 16)
+points(x = fc_150[p_150 < 0.05 & fc_150 < 0],
+       y = -log(x = p_150[p_150 < 0.05 & fc_150 < 0],base = 10),
+       col = "#3182bd",
+       pch = 16)
+legend(x = "topright",
+       legend = c("Increased","Decreased"),
+       col = c("#de2d26","#3182bd"),pch=c(16,16),box.lwd = 0.5)
+title(xlab = expression("Log"[2]*" fold change"),
+      ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
+      mgp = c(2.5,1,0))
+dev.off()
 }
 
 # MSigDB enrichments
@@ -211,9 +285,9 @@ enrich_down_90 <- hypeR(signature = (row.names(bulk$deseq2$de90$results)[!is.na(
 # Only one enrichment for down (angiogenesis)
 
 enrich_up_150 <- hypeR(signature = (row.names(bulk$deseq2$de150$results)[!is.na(bulk$deseq2$de150$results$pvalue)])[fc_150 > 0 & p_150 < 0.05],
-                      gsets = hallmark,fdr_cutoff = 0.01,do_plots = T)
+                       gsets = hallmark,fdr_cutoff = 0.01,do_plots = T)
 enrich_down_150 <- hypeR(signature = (row.names(bulk$deseq2$de150$results)[!is.na(bulk$deseq2$de150$results$pvalue)])[fc_150 < 0 & p_150 < 0.05],
-                        gsets = hallmark,fdr_cutoff = 0.01,do_plots = T)
+                         gsets = hallmark,fdr_cutoff = 0.01,do_plots = T)
 
 hyp_dots(enrich_up_150,top = 100)
 hyp_dots(enrich_down_150,top = 100)
