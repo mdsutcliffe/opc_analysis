@@ -72,6 +72,8 @@ p_12 <- bulk$deseq2$de12$results$padj[!is.na(bulk$deseq2$de12$results$pvalue)]
 p_90 <- bulk$deseq2$de90$results$padj[!is.na(bulk$deseq2$de90$results$pvalue)]
 p_150 <- bulk$deseq2$de150$results$padj[!is.na(bulk$deseq2$de150$results$pvalue)]
 
+
+
 # save.image(file = "./build/bulk_DESeq2_results.RData")
 
 # bulk150 volcano plot - horizontally stretched
@@ -197,80 +199,45 @@ dev.off()
 
 
 
+de12 <- bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05,c("log2FoldChange","padj")]
 
-pdf(file = "./plots/volcano_bulk90.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
-par(mar = c(3.3,3.3,0.5,0.5),mgp = c(2.2,1,0))
-plot(x = fc_90[p_90 >= 0.05],y = -log10(x = p_90[p_90 >= 0.05]),
-     col = "#bdbdbd",
-     xlim = c(-10,10),ylim = c(0,100),
-     xlab = "Log2FC",ylab = "Log10pvalue",frame = F,las = 1,
-     xaxs = "i",yaxs = "i",lwd = 0.5)
-points(x = fc_90[p_90 < 0.05 & fc_90 < 0],y = -log10(x = p_90[p_90 < 0.05 & fc_90 < 0]),
-       col = "#2166ac")
-points(x = fc_90[p_90 < 0.05 & fc_90 > 0],y = -log10(x = p_90[p_90 < 0.05 & fc_90 > 0]),
-       col = "#b2182b")
-dev.off()
-
-
-
-
-
-
-pdf(file = "./plots/volcano_bulk90.pdf",width = 2,height = 2,pointsize = 6,useDingbats = F)
-par(mar=c(3.6,3.6,0.5,0.5))
-plot(x = c(),y = c(),
-     xlim = c(-10,10),ylim = c(0,60),
-     xlab = "",ylab = "",
-     axes = F,xaxs = "i",yaxs = "i")
+# bulk12 volcano plot
+pdf(file = "./plots/volcano_bulk12_annotated.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
+plot(x = fc_12[p_12 >= 0.05],
+     y = -log10(x = p_12[p_12 >= 0.05]),
+     pch = 16,cex = 0.5,
+     col = "#bdbdbda0",
+     xlim = c(-10,10),
+     ylim = c(0,100),
+     xlab = "Log2 fold change",
+     ylab = NA,
+     frame = F,
+     axes = F,
+     xaxs = "i",
+     yaxs = "i",
+     lwd = 0.5)
 axis(side = 1,lwd = 0.5)
-axis(side = 2,lwd = 0.5,las = 1)
-points(x = fc_90[p_90 >= 0.05],
-       y = -log(x = p_90[p_90 >= 0.05],base = 10),
-       col = "#bdbdbd",
-       pch = 16)
-points(x = fc_90[p_90 < 0.05 & fc_90 > 0],
-       y = -log(x = p_90[p_90 < 0.05 & fc_90 > 0],base = 10),
-       col = "#de2d26",
-       pch = 16)
-points(x = fc_90[p_90 < 0.05 & fc_90 < 0],
-       y = -log(x = p_90[p_90 < 0.05 & fc_90 < 0],base = 10),
-       col = "#3182bd",
-       pch = 16)
-legend(x = "topright",
-       legend = c("Increased","Decreased"),
-       col = c("#de2d26","#3182bd"),pch=c(16,16),box.lwd = 0.5)
-title(xlab = expression("Log"[2]*" fold change"),
-      ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
-      mgp = c(2.5,1,0))
+axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
+points(x = de12$log2FoldChange[de12$log2FoldChange < 0],
+       y = -log10(x = de12$padj[de12$log2FoldChange < 0]),
+       pch = 16,cex = 0.5,
+       col = "#4393c3a0",
+       lwd = 0.5)
+points(x = de12$log2FoldChange[de12$log2FoldChange > 0],
+       y = -log10(x = de12$padj[de12$log2FoldChange > 0]),
+       pch = 16,cex = 0.5,
+       col = "#d6604da0",
+       lwd = 0.5)
+goi <- c("Robo3","Clspn","Mycn","Rpl30","Rpl34","Rplp1","Rps13","Rpl36a")
+points(x = de12[goi,"log2FoldChange"],
+       y = -log10(x = de12[goi,"padj"]),
+       pch = 16,cex = 0.5,
+       col = "#000000",
+       lwd = 0.5)
+text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
 dev.off()
 
-pdf(file = "./plots/volcano_bulk150.pdf",width = 2,height = 2,pointsize = 6,useDingbats = F)
-par(mar=c(3.6,3.6,0.5,0.5))
-plot(x = c(),y = c(),
-     xlim = c(-10,10),ylim = c(0,100),
-     xlab = "",ylab = "",
-     axes = F,xaxs = "i",yaxs = "i")
-axis(side = 1,lwd = 0.5)
-axis(side = 2,lwd = 0.5,las = 1)
-points(x = fc_150[p_150 >= 0.05],
-       y = -log(x = p_150[p_150 >= 0.05],base = 10),
-       col = "#bdbdbd",
-       pch = 16)
-points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
-       y = -log(x = p_150[p_150 < 0.05 & fc_150 > 0],base = 10),
-       col = "#de2d26",
-       pch = 16)
-points(x = fc_150[p_150 < 0.05 & fc_150 < 0],
-       y = -log(x = p_150[p_150 < 0.05 & fc_150 < 0],base = 10),
-       col = "#3182bd",
-       pch = 16)
-legend(x = "topright",
-       legend = c("Increased","Decreased"),
-       col = c("#de2d26","#3182bd"),pch=c(16,16),box.lwd = 0.5)
-title(xlab = expression("Log"[2]*" fold change"),
-      ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
-      mgp = c(2.5,1,0))
-dev.off()
 
 
 # MSigDB enrichments

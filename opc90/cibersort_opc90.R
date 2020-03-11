@@ -105,7 +105,7 @@ cor.test(as.numeric(opc90$log2[opc90$log2$symbol == "Upf3a",9+which(opc90$info$t
 
 plot(x = 1:56,y = as.numeric(opc90$log2[opc90$log2$symbol == "Rad51c",9+which(opc90$info$type == "ten-cell")]))
 
-plotGene = ""
+plotGene = "Slx1b"
 png(filename = paste0("~/",plotGene,".png"),width = 1.5,height = 3,units = "in",res = 300,pointsize = 7)
 par(mai = c(0.25,0.3,0.25,0),mgp = c(1.6,0.6,0))
 plot(x = ifelse(test = colnames(opc90$log2[,9+which(opc90$info$type == "ten-cell")]) %in% undefined_samples,2,1) + runif(n = 56,min = -0.05,max = 0.05),
