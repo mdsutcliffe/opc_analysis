@@ -75,7 +75,7 @@ dds <- DESeq(object = dds)
 res <- results(object = dds)
 resOrdered <- res[order(res$padj),]
 
-as.data.frame(resOrdered[1:20,c("log2FoldChange","pvalue","padj")])
+as.data.frame(resOrdered[1:60,c("log2FoldChange","pvalue","padj")])
 plotCounts(dds = dds,gene = "Rad51c",intgroup = "celltype")
 
 res2 <- resOrdered[!is.na(resOrdered$padj) & resOrdered$padj < 0.05,]
@@ -101,3 +101,22 @@ plot(as.numeric(opc90$log2[opc90$log2$symbol == "Upf3a",9+which(opc90$info$type 
 
 cor.test(as.numeric(opc90$log2[opc90$log2$symbol == "Upf3a",9+which(opc90$info$type == "ten-cell")]),
      as.numeric(opc90$log2[opc90$log2$symbol == "Upf3b",9+which(opc90$info$type == "ten-cell")]))
+
+
+plot(x = 1:56,y = as.numeric(opc90$log2[opc90$log2$symbol == "Rad51c",9+which(opc90$info$type == "ten-cell")]))
+
+plotGene = ""
+png(filename = paste0("~/",plotGene,".png"),width = 1.5,height = 3,units = "in",res = 300,pointsize = 7)
+par(mai = c(0.25,0.3,0.25,0),mgp = c(1.6,0.6,0))
+plot(x = ifelse(test = colnames(opc90$log2[,9+which(opc90$info$type == "ten-cell")]) %in% undefined_samples,2,1) + runif(n = 56,min = -0.05,max = 0.05),
+     y = as.numeric(opc90$log2[opc90$log2$symbol == plotGene,9+which(opc90$info$type == "ten-cell")]),
+     xlim = c(0.5,2.5),
+     ylim = c(0,10),
+     axes = F,
+     xlab = NA,
+     ylab = "Log2(TPM + 1)",
+     main = plotGene,
+     lwd = 0.5)
+axis(side = 1,at = c(1,2),labels = c("\"Defined\"","\"Undefined\""))
+axis(side = 2,las = 1)
+dev.off()

@@ -12,7 +12,6 @@ for (i in 1:length(fList)) {
   arvListM[[i]] <- resMale$arv
 }
 
-
 gene_set_F <- table(unlist(sapply(1:100,function(x) arvListF[[x]]$symbol)))
 gene_set_F <- names(gene_set_F)[gene_set_F == 100]
 
@@ -33,31 +32,34 @@ avg_vars_M <- data.frame(cbind(tencell_var = apply(X = tencell_var_M,MARGIN = 1,
 avg_vars_F_sort <- avg_vars_F[order(avg_vars_F$tencell_var,decreasing = T),]
 avg_vars_M_sort <- avg_vars_M[order(avg_vars_M$tencell_var,decreasing = T),]
 
-
-c(rep(10585,16),ifelse(row.names(avg_vars_F_sort) %in% opc12_rheg,16,1))
-
-pdf(file = "./plots/ranked_dispersion_opc12_final.pdf",width = 2.25,height = 2.75,pointsize = 7,useDingbats = F)
-par(mai = c(0.5,0.5,0,0),mfrow = c(2,1))
+pdf(file = "./plots/ranked_dispersion_opc12.pdf",width = 2.25,height = 2.5,pointsize = 7,useDingbats = F)
+par(mai = c(0.15,0.5,0,0),mfrow = c(2,1),mgp = c(0.85,0.6,0))
 plot(x = c(1:10585,c(1:10585)[!(row.names(avg_vars_M_sort) %in% opc12_rheg)]),
      y = c(avg_vars_M_sort$pooled_var,avg_vars_M_sort$tencell_var[!(row.names(avg_vars_M_sort) %in% opc12_rheg)]),
      col = c(rep("#00000020",10585),rep("#bcbddc",count(!(row.names(avg_vars_M_sort) %in% opc12_rheg)))),
      frame = F,las = 1,axes = F,
      xlim = c(1,10585),ylim = c(0,12),
-     xlab = "gene rank",
-     ylab = "Ranked dispersion")
+     xlab = NA,
+     ylab = NA,
+     lwd = 0.5)
 points(x = c(1:10585)[row.names(avg_vars_M_sort) %in% opc12_rheg],y = avg_vars_M_sort$tencell_var[row.names(avg_vars_M_sort) %in% opc12_rheg],
-       col = "#756bb1")
-axis(side = 1,at = c(1,10585))
-axis(side = 2,las = 1)
+       col = "#756bb1",
+       lwd = 0.5)
+axis(side = 2,las = 1,lwd = 0.5)
+text(x = 10585,y = 12,labels = "Male",adj = c(1,1))
 plot(x = c(1:10585,c(1:10585)[!(row.names(avg_vars_F_sort) %in% opc12_rheg)]),
      y = c(avg_vars_F_sort$pooled_var,avg_vars_F_sort$tencell_var[!(row.names(avg_vars_F_sort) %in% opc12_rheg)]),
      col = c(rep("#00000020",10585),rep("#99d8c9",count(!(row.names(avg_vars_F_sort) %in% opc12_rheg)))),
      frame = F,las = 1,axes = F,
      xlim = c(1,10585),ylim = c(0,12),
-     xlab = "gene rank",
-     ylab = "Ranked dispersion")
+     xlab = "Male/Female gene rank",
+     ylab = NA,
+     lwd = 0.5)
 points(x = c(1:10585)[row.names(avg_vars_F_sort) %in% opc12_rheg],y = avg_vars_F_sort$tencell_var[row.names(avg_vars_F_sort) %in% opc12_rheg],
-       col = "#31a354")
-axis(side = 1,at = c(1,10585))
-axis(side = 2,las = 1)
+       col = "#31a354",
+       lwd = 0.5)
+axis(side = 1,at = c(1,10585),lwd = 0.5)
+axis(side = 2,las = 1,lwd = 0.5)
+text(x = 10585,y = 12,labels = "Female",adj = c(1,1))
+title(ylab = "Ranked dispersion",mgp = c(1.6,0,0))
 dev.off()

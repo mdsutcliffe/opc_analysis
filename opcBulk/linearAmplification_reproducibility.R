@@ -1,7 +1,5 @@
 # Bulk LCM reproducibility
 
-source("./functions/normalizeTPM.R")
-
 # File paths
 bulk.path <- "./data/rsem_opcBulk.csv"
 bulk.info.path <- "./data/info_opcBulk.csv"
@@ -40,39 +38,35 @@ iMedian <- match(median(bulk_cor),bulk_cor)
 
 x_scatter <- seq(from = 0.9,to = 1.1,length.out = length(bulk_cor))
 
-pdf(file = "plots/linear_amplification_reproducibility_correlation.pdf",width = 1.75,height = 3,pointsize = 6)
-par(mar = c(3.6,3.6,0.8,0.8))
-plot(x = x_scatter,y = random_cor,
-     pch = 1,
+pdf(file = "plots/linear_amplification_reproducibility_correlation.pdf",width = 1.5625,height = 3.125,pointsize = 7)
+par(mai = c(0.5,0.5,0,0),mgp = c(1.8,0.6,0))
+plot(x = rep(x_scatter,2),y = c(random_cor,bulk_cor),
+     pch = c(rep(1,length(x_scatter)),rep(16,length(x_scatter))),
      lwd = 0.5,
      xlim = c(0.7,2.7),
      ylim = c(-0.2,1),
+     xaxs = "i",
      axes = F,
      xlab = "",
-     ylab = "")
-points(x = x_scatter,y = bulk_cor,pch = 16,lwd = 0.5)
-axis(side = 2,las = 1)
-legend(x = "topright",legend = c("Tumor replicates","Randomized"),pch = c(16,1),pt.lwd = c(0.5,0.5),box.lwd = 0.5)
-title(ylab = expression("Pearson correlation, "*italic("R")),mgp = c(2.5,1,0))
+     ylab = "Pearson correlation, R")
+axis(side = 2,las = 1,lwd = 0.5)
+text(x = 1.2,y = median(bulk_cor),labels = "Tumor replicates",adj = c(0,0.5),cex = 6/7)
+text(x = 1.2,y = median(random_cor),labels = "Randomized",adj = c(0,0.5),cex = 6/7)
 dev.off()
 
-pdf(file = "plots/linear_amplification_reproducibility_example.pdf",width = 3,height = 3,pointsize = 6)
-par(mar = c(3.6,3.6,0.8,0.8))
+pdf(file = "plots/linear_amplification_reproducibility_example.pdf",width = 3.125,height = 3.125,pointsize = 7)
+par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
 plot(bulk_log2[,iMedian * 2 - 1],bulk_log2[,iMedian * 2],
-     pch = 20,
-     lwd = 0,
-     col = "#00000033",
+     pch = 16,
+     col = "#00000022",
      frame = F,
      axes = F,
-     las = 1,
      xlim = c(0,15),
      ylim = c(0,15),
-     xlab = "",
-     ylab = "")
-text(x = 13,y = 10,expression(italic("R")*" = 0.980"))
-axis(side = 1)
-axis(side = 2,las = 2)
-title(xlab = expression("Replicate 1 expression in Log"[2]*"(TPM + 1)"),
-      ylab = expression("Replicate 2 expression in Log"[2]*"(TPM + 1)"),mgp = c(2.5,1,0))
+     xlab = "Replicate 1 expression in Log2(TPM + 1)",
+     ylab = "Replicate 2 expression in Log2(TPM + 1)")
+text(x = 12,y = 6,"R = 0.980")
+axis(side = 1,lwd = 0.5)
+axis(side = 2,las = 2,lwd = 0.5)
 dev.off()
 

@@ -79,7 +79,8 @@ pdf(file = "./plots/volcano_bulk150_stretch.pdf",width = 3,height = 1.5,pointsiz
 par(mai = c(0.25,0,0,0),mgp = c(1.6,0.6,0))
 plot(x = fc_150[p_150 >= 0.05],
      y = -log10(x = p_150[p_150 >= 0.05]),
-     col = "#bdbdbda0",
+     pch = 16,cex = 0.5,
+     col = "#bdbdbd22",
      xlim = c(-10,10),
      ylim = c(0,100),
      xlab = "Log2 fold change",
@@ -93,11 +94,13 @@ axis(side = 1,lwd = 0.5)
 axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
 points(x = fc_150[p_150 < 0.05 & fc_150 < 0],
        y = -log10(x = p_150[p_150 < 0.05 & fc_150 < 0]),
-       col = "#2166aca0",
+       pch = 16,cex = 0.5,
+       col = "#2166ac22",
        lwd = 0.5)
 points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
        y = -log10(x = p_150[p_150 < 0.05 & fc_150 > 0]),
-       col = "#b2182ba0",
+       pch = 16,cex = 0.5,
+       col = "#b2182b22",
        lwd = 0.5)
 text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
 dev.off()
@@ -107,6 +110,7 @@ pdf(file = "./plots/volcano_bulk150.pdf",width = 2.25,height = 2.25,pointsize = 
 par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
 plot(x = fc_150[p_150 >= 0.05],
      y = -log10(x = p_150[p_150 >= 0.05]),
+     pch = 16,cex = 0.5,
      col = "#bdbdbda0",
      xlim = c(-10,10),
      ylim = c(0,100),
@@ -121,10 +125,12 @@ axis(side = 1,lwd = 0.5)
 axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
 points(x = fc_150[p_150 < 0.05 & fc_150 < 0],
        y = -log10(x = p_150[p_150 < 0.05 & fc_150 < 0]),
+       pch = 16,cex = 0.5,
        col = "#2166aca0",
        lwd = 0.5)
 points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
        y = -log10(x = p_150[p_150 < 0.05 & fc_150 > 0]),
+       pch = 16,cex = 0.5,
        col = "#b2182ba0",
        lwd = 0.5)
 text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
@@ -135,6 +141,7 @@ pdf(file = "./plots/volcano_bulk12.pdf",width = 2.25,height = 2.25,pointsize = 7
 par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
 plot(x = fc_12[p_12 >= 0.05],
      y = -log10(x = p_12[p_12 >= 0.05]),
+     pch = 16,cex = 0.5,
      col = "#bdbdbda0",
      xlim = c(-10,10),
      ylim = c(0,100),
@@ -149,10 +156,12 @@ axis(side = 1,lwd = 0.5)
 axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
 points(x = fc_12[p_12 < 0.05 & fc_12 < 0],
        y = -log10(x = p_12[p_12 < 0.05 & fc_12 < 0]),
+       pch = 16,cex = 0.5,
        col = "#2166aca0",
        lwd = 0.5)
 points(x = fc_12[p_12 < 0.05 & fc_12 > 0],
        y = -log10(x = p_12[p_12 < 0.05 & fc_12 > 0]),
+       pch = 16,cex = 0.5,
        col = "#b2182ba0",
        lwd = 0.5)
 text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
@@ -262,13 +271,14 @@ title(xlab = expression("Log"[2]*" fold change"),
       ylab = expression("-Log"[10]*"("*italic("p")*"-value)"),
       mgp = c(2.5,1,0))
 dev.off()
-}
+
 
 # MSigDB enrichments
 
 library(hypeR)
 
-msigdb_path <- msigdb_download_all(species = "Mus musculus",output_dir = "./external")
+msigdb_path <- msigdb_download_all(species = "Mus musculus",output_dir = "./external/MSigDB")
+msigdb_path <- list(output_dir = "./external/MSigDB",vs = "V7.0.1")
 hallmark <- msigdb_fetch(msigdb_path = msigdb_path,symbol = "H")
 
 enrich_up_12 <- hypeR(signature = (row.names(bulk$deseq2$de12$results)[!is.na(bulk$deseq2$de12$results$pvalue)])[fc_12 > 0 & p_12 < 0.05],
@@ -292,3 +302,70 @@ enrich_down_150 <- hypeR(signature = (row.names(bulk$deseq2$de150$results)[!is.n
 hyp_dots(enrich_up_150,top = 100)
 hyp_dots(enrich_down_150,top = 100)
 
+hyp_dots(enrich_12_up,top = 100)
+hyp_dots(enrich_12_down,top = 100)
+hyp_dots(enrich_12_up,top = 100)
+hyp_dots(enrich_90_down,top = 100)
+
+
+enrich_12_up <- hypeR(signature = row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange > 0,]),
+                      gsets = hallmark,bg = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 12)] > 0) > 0),
+                      fdr_cutoff = 0.01)
+enrich_12_down <- hypeR(signature = row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange < 0,]),
+                        gsets = hallmark,bg = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 12)] > 0) > 0),
+                        fdr_cutoff = 0.01)
+enrich_90_up <- hypeR(signature = row.names(bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj) & bulk$deseq2$de90$results$padj < 0.05 & bulk$deseq2$de90$results$log2FoldChange > 0,]),
+                      gsets = hallmark,bg = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 90)] > 0) > 0),
+                      fdr_cutoff = 0.01)
+enrich_90_down <- hypeR(signature = row.names(bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj) & bulk$deseq2$de90$results$padj < 0.05 & bulk$deseq2$de90$results$log2FoldChange < 0,]),
+                        gsets = hallmark,bg = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 90)] > 0) > 0),
+                        fdr_cutoff = 0.01)
+
+enrich_150_up <- hypeR(signature = row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange > 0,]),
+                       gsets = hallmark,bg = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0),
+                       fdr_cutoff = 0.01)
+enrich_150_down <- hypeR(signature = row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange < 0,]),
+                         gsets = hallmark,bg = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0),
+                         fdr_cutoff = 0.01)
+
+write.table(x = enrich_12_up$as.data.frame(),file = "./temp/msigdb_12_up.tsv",quote = F,sep = "\t",row.names = F)
+write.table(x = enrich_12_down$as.data.frame(),file = "./temp/msigdb_12_down.tsv",quote = F,sep = "\t",row.names = F)
+write.table(x = enrich_90_up$as.data.frame(),file = "./temp/msigdb_90_up.tsv",quote = F,sep = "\t",row.names = F)
+write.table(x = enrich_90_down$as.data.frame(),file = "./temp/msigdb_90_down.tsv",quote = F,sep = "\t",row.names = F)
+write.table(x = enrich_150_up$as.data.frame(),file = "./temp/msigdb_150_up.tsv",quote = F,sep = "\t",row.names = F)
+write.table(x = enrich_150_down$as.data.frame(),file = "./temp/msigdb_150_down.tsv",quote = F,sep = "\t",row.names = F)
+
+# exact numbers
+
+n150up <- nrow(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange > 0,])
+n150down <- nrow(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange < 0,])
+
+binom.test(x = n150up,n = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0),p = n150down/sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0))
+binom.test(x = n150down,n = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0),p = n150up/sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0))
+
+source("./functions/overlap.test.R")
+overlap.test(df = data.frame(x = c(rep("bulk12",nrow(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05,])),
+                                   rep("bulk150",nrow(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05,]))),
+                             y = c(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05,]),
+                                   row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05,]))),
+             nGenes = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0 & rowSums(bulk$rsem[,9+which(bulk$info$day == 12)] > 0) > 0),
+             nSim = 10000)
+
+fisher.test(x = matrix(data = c(204,
+                                nrow(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05,])-204,
+                                nrow(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05,])-204,
+                                sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0 & rowSums(bulk$rsem[,9+which(bulk$info$day == 12)] > 0) > 0) - 
+                                  nrow(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05,]) - 
+                                  nrow(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05,]) + 204),nrow = 2,ncol = 2))
+
+up_12_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange > 0,]),
+                       row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange > 0,]))
+
+down_12_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange < 0,]),
+                       row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange < 0,]))
+
+up_12_down_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange > 0,]),
+                       row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange < 0,]))
+
+down_12_up_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange < 0,]),
+                       row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange > 0,]))
