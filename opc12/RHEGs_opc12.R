@@ -51,3 +51,30 @@ opc12_rheg_mat <- as.matrix(opc12_rheg_mat)
 #          labels_col = rep(x = "    ",ncol(opc12_rheg_mat)))
 # grid.text(label = "10-cell samples",y = 0.005)
 # dev.off()
+
+# Correlations
+cor(as.numeric(opc12$log2[opc12$log2$symbol == "Nbl1",9+which(opc12$info$type == "ten-cell")]),
+    as.numeric(opc12$log2[opc12$log2$symbol == "Vip",9+which(opc12$info$type == "ten-cell")]))
+
+cor(x = as.numeric(opc12$rsem[opc12$rsem$symbol == "Nbl1",9+which(opc12$info$type == "ten-cell")]),
+    y = as.numeric(opc12$rsem[opc12$rsem$symbol == "Tgfbr1",9+which(opc12$info$type == "ten-cell")]),
+    method = "pearson")
+
+cor.test(x = as.numeric(opc12$tpm[opc12$tpm$symbol == "Nbl1",9+which(opc12$info$type == "ten-cell")]),
+    y = as.numeric(opc12$tpm[opc12$tpm$symbol == "Tgfbr2",9+which(opc12$info$type == "ten-cell")]),
+    method = "spearman")
+
+
+cor(scale(as.numeric(opc12$log2[opc12$log2$symbol == "Nbl1",9+which(opc12$info$type == "ten-cell")])),
+    scale(as.numeric(opc12$log2[opc12$log2$symbol == "Vip",9+which(opc12$info$type == "ten-cell")])))
+
+cor(as.numeric(opc12$rsem[opc12$rsem$symbol == "Nbl1",9+which(opc12$info$type == "ten-cell")]),
+    as.numeric(opc12$rsem[opc12$rsem$symbol == "Tgfbr1",9+which(opc12$info$type == "ten-cell")]))
+
+
+cor(as.numeric(opc12$rsem[opc12$rsem$symbol == "Nbl1",10:ncol(opc12$rsem)]),
+    as.numeric(opc12$rsem[opc12$rsem$symbol == "Tgfbr1",10:ncol(opc12$rsem)]))
+
+spearmancors <- apply(X = opc12$tpm[,9+which(opc12$info$type == "ten-cell")],MARGIN = 1,function(x) cor(as.numeric(opc12$tpm[opc12$tpm$symbol == "Nbl1",9+which(opc12$info$type == "ten-cell")]),as.numeric(x)))
+plot(x = as.numeric(opc12$log2[opc12$log2$symbol == "Nbl1",9+which(opc12$info$type == "ten-cell")]),
+         y = as.numeric(opc12$log2[order(spearmancors,decreasing = T)[3],9+which(opc12$info$type == "ten-cell")]))

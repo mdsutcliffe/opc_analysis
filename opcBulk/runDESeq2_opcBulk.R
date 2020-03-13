@@ -77,7 +77,7 @@ p_150 <- bulk$deseq2$de150$results$padj[!is.na(bulk$deseq2$de150$results$pvalue)
 # save.image(file = "./build/bulk_DESeq2_results.RData")
 
 # bulk150 volcano plot - horizontally stretched
-pdf(file = "./plots/volcano_bulk150_stretch.pdf",width = 3,height = 1.5,pointsize = 7,useDingbats = F)
+pdf(file = "./plots/volcano_bulk150_stretch.pdf",width = 3,height = 1.5,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.25,0,0,0),mgp = c(1.6,0.6,0))
 plot(x = fc_150[p_150 >= 0.05],
      y = -log10(x = p_150[p_150 >= 0.05]),
@@ -91,24 +91,24 @@ plot(x = fc_150[p_150 >= 0.05],
      axes = F,
      xaxs = "i",
      yaxs = "i",
-     lwd = 0.5)
-axis(side = 1,lwd = 0.5)
-axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
+     lwd = 0.5/0.75)
+axis(side = 1,lwd = 0.5/0.75)
+axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5/0.75)
 points(x = fc_150[p_150 < 0.05 & fc_150 < 0],
        y = -log10(x = p_150[p_150 < 0.05 & fc_150 < 0]),
        pch = 16,cex = 0.5,
        col = "#2166ac22",
-       lwd = 0.5)
+       lwd = 0.5/0.75)
 points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
        y = -log10(x = p_150[p_150 < 0.05 & fc_150 > 0]),
        pch = 16,cex = 0.5,
        col = "#b2182b22",
-       lwd = 0.5)
+       lwd = 0.5/0.75)
 text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
 dev.off()
 
 # bulk150 volcano plot
-pdf(file = "./plots/volcano_bulk150.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+pdf(file = "./plots/volcano_bulk150.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
 plot(x = fc_150[p_150 >= 0.05],
      y = -log10(x = p_150[p_150 >= 0.05]),
@@ -122,19 +122,19 @@ plot(x = fc_150[p_150 >= 0.05],
      axes = F,
      xaxs = "i",
      yaxs = "i",
-     lwd = 0.5)
-axis(side = 1,lwd = 0.5)
-axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
+     lwd = 0.5/0.75)
+axis(side = 1,lwd = 0.5/0.75)
+axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5/0.75)
 points(x = fc_150[p_150 < 0.05 & fc_150 < 0],
        y = -log10(x = p_150[p_150 < 0.05 & fc_150 < 0]),
        pch = 16,cex = 0.5,
        col = "#2166aca0",
-       lwd = 0.5)
+       lwd = 0.5/0.75)
 points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
        y = -log10(x = p_150[p_150 < 0.05 & fc_150 > 0]),
        pch = 16,cex = 0.5,
        col = "#b2182ba0",
-       lwd = 0.5)
+       lwd = 0.5/0.75)
 text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
 dev.off()
 
@@ -310,6 +310,21 @@ n150down <- nrow(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj
 binom.test(x = n150up,n = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0),p = n150down/sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0))
 binom.test(x = n150down,n = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0),p = n150up/sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 150)] > 0) > 0))
 
+binom.test(x = n150up,n = length(bulk$deseq2$de150$genesDE),p = 0.5)
+binom.test(x = n150down,n = length(bulk$deseq2$de150$genesDE),p = 0.5)
+
+n12up <- nrow(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange > 0,])
+n12down <- nrow(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange < 0,])
+
+binom.test(x = n12up,n = length(bulk$deseq2$de12$genesDE),p = 0.5)
+binom.test(x = n12down,n = length(bulk$deseq2$de12$genesDE),p = 0.5)
+
+n90up <- nrow(bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj) & bulk$deseq2$de90$results$padj < 0.05 & bulk$deseq2$de90$results$log2FoldChange > 0,])
+n90down <- nrow(bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj) & bulk$deseq2$de90$results$padj < 0.05 & bulk$deseq2$de90$results$log2FoldChange < 0,])
+
+binom.test(x = n90up,n = length(bulk$deseq2$de90$genesDE),p = 0.5)
+binom.test(x = n90down,n = length(bulk$deseq2$de90$genesDE),p = 0.5)
+
 source("./functions/overlap.test.R")
 overlap.test(df = data.frame(x = c(rep("bulk12",nrow(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05,])),
                                    rep("bulk150",nrow(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05,]))),
@@ -336,3 +351,8 @@ up_12_down_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq
 
 down_12_up_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange < 0,]),
                        row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange > 0,]))
+
+denom <- length(intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj),]),row.names(bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj),])))
+binom.test(x = 469,n = denom,p = 143/denom)
+
+

@@ -73,3 +73,49 @@ axis(side = 1,at = seq(0,0.8,0.2),lwd = 0.5)
 axis(side = 2,at = seq(0,6)+0.5,labels = F,lwd = 0.5)
 axis(side = 2,at = seq(1,6),labels = rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia")),las = 1,tick = F,lwd = 0.5,par(mgp = c(0,0.2,0)))
 dev.off()
+
+pdf(file = "./plots/cibersort_bulk150_boxplot.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
+par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
+graphics::plot(x = c(),y = c(),
+               xlim = c(0,0.8),
+               ylim = c(0.5,6.5),
+               xlab = "Relative proportion",
+               ylab = NA,
+               xaxs = "i",
+               yaxs = "i",
+               axes = F)
+graphics::boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia"))],
+                  ylim = c(0,0.8),
+                  xaxs = "i",
+                  yaxs = "i",
+                  horizontal = TRUE,
+                  axes = F,
+                  lwd = 0.5/0.75,
+                  add = T)
+axis(side = 1,las = 1,lwd = 0.5/0.75)
+axis(side = 2,las = 1,lwd = NA,at = 1:6,labels = rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia")),par(mgp = c(0,0.125,0)))
+axis(side = 2,las = 1,lwd = 0.5/0.75,at = 0:6 + 0.5,labels = NA)
+dev.off()
+
+cairo_pdf(filename = "./plots/cibersort_bulk150_boxplot_cairo.pdf",width = 2.25,height = 2.25,pointsize = 7,family = "Arial",)
+par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
+graphics::plot(x = c(0,1),y = c(0,1),
+               xlim = c(0,0.8),
+               ylim = c(0.5,6.5),
+               xlab = "Relative proportion",
+               ylab = NA,
+               xaxs = "i",
+               yaxs = "i",
+               axes = F)
+graphics::boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia"))],
+                  ylim = c(0,0.8),
+                  xaxs = "i",
+                  yaxs = "i",
+                  horizontal = TRUE,
+                  axes = F,
+                  lwd = 0.5,
+                  add = T)
+axis(side = 1,las = 1,lwd = 0.5)
+axis(side = 2,las = 1,lwd = NA,at = 1:6,labels = rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia")),par(mgp = c(0,0.15,0)))
+axis(side = 2,las = 1,lwd = 0.5,at = 0:6 + 0.5,labels = NA)
+dev.off()
