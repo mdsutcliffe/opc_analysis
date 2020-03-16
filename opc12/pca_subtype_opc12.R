@@ -167,7 +167,7 @@ agglomerate_pc <- t(sapply(X = nCells,FUN = function(nC) {
         return(iPC1)
 }))
 
-agglomerate_pc_hm <- agglomerate_pc[,complete.cases(bulk_pc1)]
+agglomerate_pc_hm <- agglomerate_pc[,!is.na(agglomerate_pc[1,])]
 pdf(file = "./plots/pc_opc12_agglomerations_heatmap.pdf",width = 8,height = 4,pointsize = 7,useDingbats = F)
 pheatmap(mat = agglomerate_pc_hm[,ncol(agglomerate_pc_hm):1],
          color = rev(brewer.pal(11,"RdBu")),

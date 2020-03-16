@@ -169,6 +169,8 @@ points(x = fc_12[p_12 < 0.05 & fc_12 > 0],
 text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
 dev.off()
 
+de90 <- bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj) & bulk$deseq2$de90$results$padj < 0.05,c("log2FoldChange","padj")]
+
 # bulk90 volcano plot
 pdf(file = "./plots/volcano_bulk90.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
 par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
@@ -184,6 +186,16 @@ plot(x = fc_90[p_90 >= 0.05],
      xaxs = "i",
      yaxs = "i",
      lwd = 0.5)
+goi90 <- c("Top2a","Ccna2","Hjurp")
+col_bulk90 <- ifelse(bulk$deseq2$de90$results$padj[!is.na(bulk$deseq2$de90$results$padj)] >= 0.05,"#bdbdbdaa",
+                     ifelse(row.names(bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj),]) %in% goi90,"#000000ff",
+                            ifelse(bulk$deseq2$de90$results$log2FoldChange[!is.na(bulk$deseq2$de90$results$padj)] < 0,"#4393c3a0","#d6604da0")))
+plot(x = bulk$deseq2$de90$results$log2FoldChange[!is.na(bulk$deseq2$de90$results$padj)],
+     y = -log10(x = bulk$deseq2$de90$results$padj[!is.na(bulk$deseq2$de90$results$padj)]),
+     pch = 16,
+     col = col_bulk90,
+     cex = 0.5
+)
 axis(side = 1,lwd = 0.5)
 axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
 points(x = fc_90[p_90 < 0.05 & fc_90 < 0],
@@ -194,9 +206,46 @@ points(x = fc_90[p_90 < 0.05 & fc_90 > 0],
        y = -log10(x = p_90[p_90 < 0.05 & fc_90 > 0]),
        col = "#b2182ba0",
        lwd = 0.5)
-text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
+goi <- c("Top2a","Ccna2","Hjurp")
+points(x = de90[goi,"log2FoldChange"],
+       y = -log10(x = de90[goi,"padj"]),
+       pch = 16,cex = 0.5,
+       col = "#000000",
+       lwd = 0.5)
+text(x = 0.5,y = 100,labels = "Log10(pvalue)",adj = c(0,0.5),xpd = T)
 dev.off()
 
+de90 <- bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj),c("log2FoldChange","padj")]
+goi90 <- c("Top2a","Ccna2","Hjurp")
+pdf(file = "./plots/volcano_bulk90.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
+par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
+plot(x = NULL,y = NULL,
+     xlim = c(-10,10),
+     ylim = c(0,100),
+     xlab = "Log2foldchange",
+     ylab = NA,
+     xaxs = "i",
+     yaxs = "i",
+     axes = F)
+points(x = de90$log2FoldChange[de90$padj >= 0.05],
+       y = -log10(de90$padj[de90$padj >= 0.05]),
+       pch = 16,
+       cex = 0.5,
+       col = "#bdbdbd88")
+points(x = de90$log2FoldChange[de90$padj < 0.05 & !(row.names(de90) %in% goi90)],
+       y = -log10(de90$padj[de90$padj < 0.05 & !(row.names(de90) %in% goi90)]),
+       pch = 16,
+       cex = 0.5,
+       col = ifelse(de90$log2FoldChange[de90$padj < 0.05 & !(row.names(de90) %in% goi90)] < 0,"#4393c388","#d6604d88"))
+points(x = de90$log2FoldChange[de90$padj < 0.05 & (row.names(de90) %in% goi90)],
+       y = -log10(de90$padj[de90$padj < 0.05 & (row.names(de90) %in% goi90)]),
+       pch = 16,
+       cex = 0.5,
+       col = "#000000ff")
+axis(side = 1,lwd = 0.5/0.75)
+axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5/0.75)
+text(x = 0.5,y = 100,labels = "Log10pvalue",adj = c(0,0.5),xpd = T)
+dev.off()
 
 
 de12 <- bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05,c("log2FoldChange","padj")]
@@ -344,15 +393,26 @@ up_12_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de1
                        row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange > 0,]))
 
 down_12_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange < 0,]),
-                       row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange < 0,]))
+                         row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange < 0,]))
 
 up_12_down_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange > 0,]),
-                       row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange < 0,]))
+                            row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange < 0,]))
 
 down_12_up_150 <- intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange < 0,]),
-                       row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange > 0,]))
+                            row.names(bulk$deseq2$de150$results[!is.na(bulk$deseq2$de150$results$padj) & bulk$deseq2$de150$results$padj < 0.05 & bulk$deseq2$de150$results$log2FoldChange > 0,]))
 
 denom <- length(intersect(row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj),]),row.names(bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj),])))
 binom.test(x = 469,n = denom,p = 143/denom)
 
 
+
+denom <- merge(bulk$tpm[,c(3,9 + which(bulk$info$day == 12))],opc12$tpm[,c(3,10:ncol(opc12$tpm))],by = "symbol")
+sum(rowSums(denom[,2:ncol(denom)] > 0) > 0)
+fisher.test(x = matrix(data = c(4,
+                                length(bulk$deseq2$de12$genesDE) - 4,
+                                length(opc12_rheg) - 4,
+                                sum(rowSums(denom[,2:ncol(denom)] > 0) > 0) - length(union(bulk$deseq2$de12$genesDE,opc12_rheg))),nrow = 2,ncol = 2))
+
+
+opc12F <- read.table(file = "./data/opc12_true/cleancounts_female_true.tsv")
+opc12M <- read.table(file = "./data/opc12_true/cleancounts_male_true.tsv")
