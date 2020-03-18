@@ -1,4 +1,4 @@
-x <- as.numeric(opc12_projection1[opc12$info$type == "ten-cell"] + 30)
+x <- -1*as.numeric(opc12_projection1[opc12$info$type == "ten-cell"])
 
 hist(x,breaks = 24)
 
@@ -229,3 +229,9 @@ y <- stochasticProfilingML()
 # [4,] 0.8452            2.593            1.536 0.079 212.2336
 # [5,] 0.8453            2.592            1.535 0.079 212.2336
 # [6,] 0.8452            2.592            1.536 0.079 212.2337
+
+
+
+# Flip direction
+x <- as.numeric(-1*opc12_projection1[opc12$info$type == "ten-cell"] + 120)
+y <- stochasticProfilingML()

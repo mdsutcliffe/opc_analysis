@@ -64,13 +64,13 @@ bulk$deseq2 <- runDESeq2()
 
 # Extract fold changes and p-values
 
-fc_12 <- bulk$deseq2$de12$results$log2FoldChange[!is.na(bulk$deseq2$de12$results$pvalue)]
-fc_90 <- bulk$deseq2$de90$results$log2FoldChange[!is.na(bulk$deseq2$de90$results$pvalue)]
-fc_150 <- bulk$deseq2$de150$results$log2FoldChange[!is.na(bulk$deseq2$de150$results$pvalue)]
+fc_12 <- bulk$deseq2$de12$results$log2FoldChange[!is.na(bulk$deseq2$de12$results$padj)]
+fc_90 <- bulk$deseq2$de90$results$log2FoldChange[!is.na(bulk$deseq2$de90$results$padj)]
+fc_150 <- bulk$deseq2$de150$results$log2FoldChange[!is.na(bulk$deseq2$de150$results$padj)]
 
-p_12 <- bulk$deseq2$de12$results$padj[!is.na(bulk$deseq2$de12$results$pvalue)]
-p_90 <- bulk$deseq2$de90$results$padj[!is.na(bulk$deseq2$de90$results$pvalue)]
-p_150 <- bulk$deseq2$de150$results$padj[!is.na(bulk$deseq2$de150$results$pvalue)]
+p_12 <- bulk$deseq2$de12$results$padj[!is.na(bulk$deseq2$de12$results$padj)]
+p_90 <- bulk$deseq2$de90$results$padj[!is.na(bulk$deseq2$de90$results$padj)]
+p_150 <- bulk$deseq2$de150$results$padj[!is.na(bulk$deseq2$de150$results$padj)]
 
 
 
@@ -104,7 +104,7 @@ points(x = fc_150[p_150 < 0.05 & fc_150 > 0],
        pch = 16,cex = 0.5,
        col = "#b2182b22",
        lwd = 0.5/0.75)
-text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
+text(x = 0.5,y = 100,labels = "Log10(pvalue)",adj = c(0,0.5),xpd = T)
 dev.off()
 
 # bulk150 volcano plot
@@ -146,7 +146,7 @@ plot(x = fc_12[p_12 >= 0.05],
      pch = 16,cex = 0.5,
      col = "#bdbdbda0",
      xlim = c(-10,10),
-     ylim = c(0,100),
+     ylim = c(0,60),
      xlab = "Log2 fold change",
      ylab = NA,
      frame = F,
@@ -155,7 +155,7 @@ plot(x = fc_12[p_12 >= 0.05],
      yaxs = "i",
      lwd = 0.5)
 axis(side = 1,lwd = 0.5)
-axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
+axis(side = 2,at = seq(0,60,20),labels = c(NA,seq(20,60,20)),pos = 0,las = 1,lwd = 0.5)
 points(x = fc_12[p_12 < 0.05 & fc_12 < 0],
        y = -log10(x = p_12[p_12 < 0.05 & fc_12 < 0]),
        pch = 16,cex = 0.5,
@@ -221,7 +221,7 @@ pdf(file = "./plots/volcano_bulk90.pdf",width = 2.25,height = 2.25,pointsize = 7
 par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
 plot(x = NULL,y = NULL,
      xlim = c(-10,10),
-     ylim = c(0,100),
+     ylim = c(0,60),
      xlab = "Log2foldchange",
      ylab = NA,
      xaxs = "i",
@@ -243,48 +243,48 @@ points(x = de90$log2FoldChange[de90$padj < 0.05 & (row.names(de90) %in% goi90)],
        cex = 0.5,
        col = "#000000ff")
 axis(side = 1,lwd = 0.5/0.75)
-axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5/0.75)
-text(x = 0.5,y = 100,labels = "Log10pvalue",adj = c(0,0.5),xpd = T)
+axis(side = 2,at = seq(0,60,20),labels = c(NA,seq(20,60,20)),pos = 0,las = 1,lwd = 0.5/0.75)
+text(x = 0.5,y = 60,labels = "Log10pvalue",adj = c(0,0.5),xpd = T)
 dev.off()
 
 
 de12 <- bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05,c("log2FoldChange","padj")]
 
 # bulk12 volcano plot
-pdf(file = "./plots/volcano_bulk12_annotated.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+pdf(file = "./plots/volcano_bulk12_annotated.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
 plot(x = fc_12[p_12 >= 0.05],
      y = -log10(x = p_12[p_12 >= 0.05]),
      pch = 16,cex = 0.5,
      col = "#bdbdbda0",
      xlim = c(-10,10),
-     ylim = c(0,100),
+     ylim = c(0,60),
      xlab = "Log2 fold change",
      ylab = NA,
      frame = F,
      axes = F,
      xaxs = "i",
      yaxs = "i",
-     lwd = 0.5)
-axis(side = 1,lwd = 0.5)
-axis(side = 2,at = seq(0,100,20),labels = c(NA,seq(20,100,20)),pos = 0,las = 1,lwd = 0.5)
+     lwd = 0.5/0.75)
+axis(side = 1,lwd = 0.5/0.75)
+axis(side = 2,at = seq(0,60,20),labels = c(NA,seq(20,60,20)),pos = 0,las = 1,lwd = 0.5/0.75)
 points(x = de12$log2FoldChange[de12$log2FoldChange < 0],
        y = -log10(x = de12$padj[de12$log2FoldChange < 0]),
        pch = 16,cex = 0.5,
        col = "#4393c3a0",
-       lwd = 0.5)
+       lwd = 0.5/0.75)
 points(x = de12$log2FoldChange[de12$log2FoldChange > 0],
        y = -log10(x = de12$padj[de12$log2FoldChange > 0]),
        pch = 16,cex = 0.5,
        col = "#d6604da0",
-       lwd = 0.5)
+       lwd = 0.5/0.75)
 goi <- c("Robo3","Clspn","Mycn","Rpl30","Rpl34","Rplp1","Rps13","Rpl36a")
 points(x = de12[goi,"log2FoldChange"],
        y = -log10(x = de12[goi,"padj"]),
        pch = 16,cex = 0.5,
        col = "#000000",
-       lwd = 0.5)
-text(x = 0.5,y = 100,labels = "Log10(p-value)",adj = c(0,0.5),xpd = T)
+       lwd = 0.5/0.75)
+text(x = 0.5,y = 60,labels = "Log10(pvalue)",adj = c(0,0.5),xpd = T)
 dev.off()
 
 

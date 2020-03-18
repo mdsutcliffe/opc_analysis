@@ -17,13 +17,16 @@ embedding_opc12_rheg <- uwot::umap(X = t(umap_opc12_rheg))
 set.seed(12)
 embedding_opc12 <- uwot::umap(X = t(umap_opc12))
 
-pdf(file = "./plots/UMAP_opc12.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
+pdf(file = "./plots/UMAP_opc12.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
 plot(x = embedding_opc12,
      pch = ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "F8520",1,
                   ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "F8519",16,
-                         ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "M8516",0,15))),
-     lwd = 0.5,
+                         ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "M8516",1,16))),
+     col = ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "F8520","#756bb1",
+                  ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "F8519","#756bb1",
+                         ifelse(opc12$info$mouse[opc12$info$type == "ten-cell"] == "M8516","#31a354","#31a354"))),
+     lwd = 0.5/0.75,
      xlim = c(-6,6),
      ylim = c(-4,4),
      xlab = "UMAP-1",
@@ -32,6 +35,6 @@ plot(x = embedding_opc12,
      axes = F,
      xaxs = "i",
      yaxs = "i")
-axis(side = 1,lwd = 0.5,las = 1)
-axis(side = 2,lwd = 0.5,las = 1)
+axis(side = 1,lwd = 0.5/0.75,las = 1)
+axis(side = 2,lwd = 0.5/0.75,las = 1)
 dev.off()

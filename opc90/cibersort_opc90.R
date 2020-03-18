@@ -12,11 +12,11 @@ opc90_mixture <- opc90$tpm[,c(1:9,9+which(opc90$info$type == "ten-cell"))]
 
 opc90_mixture <- opc90_mixture[,c(3,10:ncol(opc90_mixture))]
 
-write.table(x = opc90_mixture,file = "./temp/mixture_opc90.txt",quote = F,sep = "\t",row.names = F)
+write.table(x = opc90_mixture,file = "~/mixture_opc90_old.txt",quote = F,sep = "\t",row.names = F)
 
 # Run cibersort
 
-f.cibersort_opc90 <- "./external/CIBERSORTx_opc90.txt"
+f.cibersort_opc90 <- "./external/CIBERSORTx_Job35_Results.txt"
 
 cibersort_opc90 <- read.table(file = f.cibersort_opc90,header = T,sep = "\t")
 
@@ -42,7 +42,7 @@ ann <- data.frame(row.names = row.names(cibersort_opc90),
                   undefined = as.character(rowSums(cibersort_opc90 < max(cibersort_opc90)/5) == 6))
 
 pdf(file = "./plots/cibersort_opc90_results.pdf",width = 8,height = 8,pointsize = 16,useDingbats = F)
-pheatmap(mat = cibersort_opc90,
+pheatmap(mat = cibersort_opc90,clustering_method = "ward.D2",
          color = brewer.pal(9,"Reds"),
          show_rownames = F,
          annotation_row = ann,

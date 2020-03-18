@@ -52,10 +52,10 @@ dev.off()
 
 # Boxplots
 pdf(file = "./plots/cibersort_WT_150_boxplot.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
-boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia"))],horizontal = T,las = 1,xlab = "Relative proportion",frame = F,xaxs = "i",yaxs = "i",axes = F,ylim = c(0,0.8),xlim = c(0.7,6.3),par(mar = c(3.1,4.6,0.5,1),mgp = c(2,1,0)),lwd = 0.5)
-axis(side = 1,at = seq(0,0.8,0.2),lwd = 0.5)
-axis(side = 2,at = seq(0,6)+0.5,labels = F,lwd = 0.5)
-axis(side = 2,at = seq(1,6),labels = rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia")),las = 1,tick = F,lwd = 0.5,par(mgp = c(0,0.2,0)))
+boxplot(x = 100*cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia"))],horizontal = T,las = 1,xlab = "Relative proportion",frame = F,xaxs = "i",yaxs = "i",axes = F,ylim = c(0,80),xlim = c(0.7,6.3),par(mar = c(3.1,6,0.5,1),mgp = c(2,1,0)),lwd = 0.5/0.75)
+axis(side = 1,at = seq(0,80,20),labels = c(seq(0,60,20),"80%"),lwd = 0.5/0.75)
+axis(side = 2,at = seq(0,6)+0.5,labels = F,lwd = 0.5/0.75)
+axis(side = 2,at = seq(1,6),labels = rev(c("OPC","Astrocyte","Neuron","oligodendrocyte","Endothelial","Microglia")),las = 1,tick = F,lwd = 0.5/0.75,par(mgp = c(0,0.2,0)),cex = 6/7)
 dev.off()
 
 pdf(file = "./plots/cibersort_WT_12_boxplot.pdf",width = 2.5,height = 2,pointsize = 7,useDingbats = F)
@@ -72,7 +72,7 @@ boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial
         axes = F,ylim = c(0,0.8),xlim = c(0.7,6.2),par(mai = c(0.5,0.5,0,0)),lwd = 0.5)
 axis(side = 1,at = seq(0,0.8,0.2),lwd = 0.5)
 axis(side = 2,at = seq(0,6)+0.5,labels = F,lwd = 0.5)
-axis(side = 2,at = seq(1,6),labels = rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia")),las = 1,tick = F,lwd = 0.5,par(mgp = c(0,0.2,0)))
+axis(side = 2,at = seq(1,6),labels = rev(c("OPC","Astrocyte","Neuron","oligodendrocyte","Endothelial","Microglia")),las = 1,tick = F,lwd = 0.5,par(mgp = c(0,0.2,0)))
 dev.off()
 
 pdf(file = "./plots/cibersort_bulk150_boxplot8.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,version = "2.0",family = "ArialMT")

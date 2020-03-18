@@ -90,11 +90,11 @@ sig_genes_all <- unique(as.character(sig_genes))
 
 sig_matrix_pericyte <- sig_avg_tpm[match(sig_genes_all,sig_avg_tpm$symbol),]
 
-pheatmap(sig_matrix_pericyte[,2:ncol(sig_matrix_pericyte)],cluster_rows = F,cluster_cols = F,scale = "row")
+pheatmap(sig_matrix_pericyte[,2:ncol(sig_matrix_pericyte)],cluster_rows = F,cluster_cols = F,scale = "row",color = rev(brewer.pal(11,"RdBu")),show_rownames = F)
 
 write.table(x = sig_matrix_pericyte,file = "./temp/signature_matrix_pericyte.txt",append = F,quote = F,sep = "\t",row.names = F,col.names = T)
 
-
+pericyte_genes <- sig_matrix_pericyte$symbol[(4*40 + 1):(5*40)]
 
 
 
