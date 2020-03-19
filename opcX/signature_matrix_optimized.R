@@ -5,7 +5,7 @@ load("./build/annotables_mouse.RData")
 
 removeType <- c("WC","Microvascular","NFO","Pericyte")
 
-f.barres <- list.files(path = "./external/GSE52564_RAW",full.names = T)]
+f.barres <- list.files(path = "./external/GSE52564_RAW",full.names = T)
 f.barres.base <- basename(f.barres)
 
 sig <- data.frame(symbol = read_xls(path = f.barres[1])$gene.symbol)
@@ -50,5 +50,4 @@ sig_matrix <- sig_avg_tpm[match(sig_genes_all,sig_avg_tpm$symbol),]
 
 pheatmap(sig_matrix[,2:ncol(sig_matrix)],cluster_rows = F,cluster_cols = F,scale = "row")
 
-write.table(x = sig_matrix,file = "./temp/signature_matrix.txt",append = F,quote = F,sep = "\t",row.names = F,col.names = T)
-
+write.table(x = sig_matrix,file = "./temp/signature_matrix_optimized.txt",append = F,quote = F,sep = "\t",row.names = F,col.names = T)

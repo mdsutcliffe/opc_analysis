@@ -37,41 +37,43 @@ avg_vars_M_sort <- log10(avg_vars_M_sort)
 
 goi <- c("Aldh1a1","Axl","Ltbp4","Bmp1","Nbl1","Wnt7a","Ctnnb1")
 pdf(file = "./plots/ranked_dispersion_opc12.pdf",width = 2.25,height = 2.5,pointsize = 7,useDingbats = F,family = "ArialMT")
-par(mai = c(0.15,0.5,0,0),mfrow = c(2,1),mgp = c(0.85,0.6,0))
-plot(x = c(1:10585,c(1:10585)[!(row.names(avg_vars_M_sort) %in% opc12_rheg)]),
-     y = c(avg_vars_M_sort$pooled_var,avg_vars_M_sort$tencell_var[!(row.names(avg_vars_M_sort) %in% opc12_rheg)]),
-     col = c(rep("#00000010",10585),rep("#bcbddc",count(!(row.names(avg_vars_M_sort) %in% opc12_rheg)))),
+par(mai = c(0.15,0.5,0,0),mfrow = c(2,1),mgp = c(1,0.6,0))
+plot(x = c(1:10585,c(1:10585)[!(row.names(avg_vars_M_sort) %in% c(opc12_rheg,opc12_uniqueM))]),
+     y = c(avg_vars_M_sort$pooled_var,avg_vars_M_sort$tencell_var[!(row.names(avg_vars_M_sort) %in% c(opc12_rheg,opc12_uniqueM))]),
+     col = c(rep("#00000010",10585),rep("#e9a3c9",sum(!(row.names(avg_vars_M_sort) %in% c(opc12_rheg,opc12_uniqueM))))),
      pch = 16,cex = 0.5,
      frame = F,las = 1,axes = F,
      xlim = c(1,10585),ylim = c(-0.5,1),
      xlab = NA,
      ylab = NA,
+     xaxs = "i",yaxs = "i",xpd = T,
      lwd = 0.5/0.75)
-points(x = c(1:10585)[row.names(avg_vars_M_sort) %in% opc12_rheg],y = avg_vars_M_sort$tencell_var[row.names(avg_vars_M_sort) %in% opc12_rheg],
+points(x = c(1:10585)[row.names(avg_vars_M_sort) %in% setdiff(c(opc12_rheg,opc12_uniqueM),goi)],y = avg_vars_M_sort$tencell_var[row.names(avg_vars_M_sort) %in% setdiff(c(opc12_rheg,opc12_uniqueM),goi)],
        col = "#FFBF00",pch = 16,cex = 0.5,
        lwd = 0.5/0.75)
 points(x = c(1:10585)[row.names(avg_vars_M_sort) %in% goi],y = avg_vars_M_sort$tencell_var[row.names(avg_vars_M_sort) %in% goi],
        col = "#000000",pch = 16,cex = 0.5,
        lwd = 0.5/0.75)
-axis(side = 2,las = 1,lwd = 0.5/0.75)
+axis(side = 2,las = 1,lwd = 0.5/0.75,at = seq(-0.5,1,0.5))
 text(x = 10585,y = 0.5,labels = "Male",adj = c(1,1))
-plot(x = c(1:10585,c(1:10585)[!(row.names(avg_vars_F_sort) %in% opc12_rheg)]),
-     y = c(avg_vars_F_sort$pooled_var,avg_vars_F_sort$tencell_var[!(row.names(avg_vars_F_sort) %in% opc12_rheg)]),
-     col = c(rep("#00000010",10585),rep("#99d8c9",count(!(row.names(avg_vars_F_sort) %in% opc12_rheg)))),
+plot(x = c(1:10585,c(1:10585)[!(row.names(avg_vars_F_sort) %in% c(opc12_rheg,opc12_uniqueF))]),
+     y = c(avg_vars_F_sort$pooled_var,avg_vars_F_sort$tencell_var[!(row.names(avg_vars_F_sort) %in% c(opc12_rheg,opc12_uniqueF))]),
+     col = c(rep("#00000010",10585),rep("#a1d76a",sum(!(row.names(avg_vars_F_sort) %in% c(opc12_rheg,opc12_uniqueF))))),
      pch = 16,cex = 0.5,
      frame = F,las = 1,axes = F,
      xlim = c(1,10585),ylim = c(-0.5,1),
+     xaxs = "i",yaxs = "i",xpd = T,
      xlab = "Male/Female gene rank",
      ylab = NA,
      lwd = 0.5/0.75)
-points(x = c(1:10585)[row.names(avg_vars_F_sort) %in% opc12_rheg],y = avg_vars_F_sort$tencell_var[row.names(avg_vars_F_sort) %in% opc12_rheg],
+points(x = c(1:10585)[row.names(avg_vars_F_sort) %in% setdiff(c(opc12_rheg,opc12_uniqueF),goi)],y = avg_vars_F_sort$tencell_var[row.names(avg_vars_F_sort) %in% setdiff(c(opc12_rheg,opc12_uniqueF),goi)],
        col = "#FFBF00",pch = 16,cex = 0.5,
        lwd = 0.5/0.75)
 points(x = c(1:10585)[row.names(avg_vars_F_sort) %in% goi],y = avg_vars_F_sort$tencell_var[row.names(avg_vars_F_sort) %in% goi],
        col = "#000000",pch = 16,cex = 0.5,
        lwd = 0.5/0.75)
 axis(side = 1,at = c(1,10585),lwd = 0.5/0.75)
-axis(side = 2,las = 1,lwd = 0.5/0.75)
+axis(side = 2,las = 1,lwd = 0.5/0.75,at = seq(-0.5,1,0.5))
 text(x = 10585,y = 0.5,labels = "Female",adj = c(1,1))
-title(ylab = "Ranked dispersion",mgp = c(2.1,0,0))
+title(ylab = "Ranked dispersion",mgp = c(2.4,0,0))
 dev.off()

@@ -53,6 +53,4 @@ sig_mat <- sig_avg[match(as.character(unlist(sig_genes)),sig_avg$symbol),]
 sig_mat <- sig_mat[complete.cases(sig_mat),setdiff(names(sig_mat),removeType)]
 sig_mat <- sig_mat[!duplicated(sig_mat$symbol),]
 
-write.table(x = sig_mat,file = "./temp/signature_exact.txt",quote= F,sep = "\t",row.names = F,col.names = T)
-
-pheatmap(sig_mat[,2:ncol(sig_mat)],cluster_rows = F,cluster_cols = F,scale = "row",color = rev(brewer.pal(11,"RdBu")),show_rownames = F)
+write.table(x = sig_mat,file = "./temp/signature_matrix_exact.txt",quote= F,sep = "\t",row.names = F,col.names = T)

@@ -35,19 +35,19 @@ row.names(cibersort_150_wt) <- cibersort_150_wt$Mixture
 cibersort_12_wt <- cibersort_12_wt[,2:(which(names(cibersort_12_wt) == "P.value") - 1)] / cibersort_12_wt$Absolute.score..sig.score.
 cibersort_150_wt <- cibersort_150_wt[,2:(which(names(cibersort_150_wt) == "P.value") - 1)] / cibersort_150_wt$Absolute.score..sig.score.
 
-pdf(file = "./plots/bulk_LCM_purity_12_WT_cibersort.pdf",width = 6,height = 6)
-par(mar = c(1.8,4,1,8),mgp = c(2.9,1,0),xpd = T)
-barplot(t(as.matrix(cibersort_12_wt)),ylab = "Fraction",names.arg = rep(x = "",nrow(cibersort_12_wt)),col = rev(brewer.pal(6,"Set1")),las = 1)
-title(xlab = "12 dpi WT bulk samples",mgp = c(0.5,0,0))
-legend(x = "topright",legend = names(cibersort_12_wt),pch = 15,col = rev(brewer.pal(6,"Set1")),inset = c(-0.4,0))
-dev.off()
-
-pdf(file = "./plots/bulk_LCM_purity_150_WT_cibersort.pdf",width = 6,height = 6)
-par(mar = c(1.8,4,1,8),mgp = c(2.9,1,0),xpd = T)
-barplot(t(as.matrix(cibersort_150_wt)),ylab = "Fraction",names.arg = rep(x = "",nrow(cibersort_150_wt)),col = rev(brewer.pal(6,"Set1")),las = 1)
-title(xlab = "150 dpi WT bulk samples",mgp = c(0.5,0,0))
-legend(x = "topright",legend = names(cibersort_150_wt),pch = 15,col = rev(brewer.pal(6,"Set1")),inset = c(-0.4,0))
-dev.off()
+# pdf(file = "./plots/bulk_LCM_purity_12_WT_cibersort.pdf",width = 6,height = 6)
+# par(mar = c(1.8,4,1,8),mgp = c(2.9,1,0),xpd = T)
+# barplot(t(as.matrix(cibersort_12_wt)),ylab = "Fraction",names.arg = rep(x = "",nrow(cibersort_12_wt)),col = rev(brewer.pal(6,"Set1")),las = 1)
+# title(xlab = "12 dpi WT bulk samples",mgp = c(0.5,0,0))
+# legend(x = "topright",legend = names(cibersort_12_wt),pch = 15,col = rev(brewer.pal(6,"Set1")),inset = c(-0.4,0))
+# dev.off()
+# 
+# pdf(file = "./plots/bulk_LCM_purity_150_WT_cibersort.pdf",width = 6,height = 6)
+# par(mar = c(1.8,4,1,8),mgp = c(2.9,1,0),xpd = T)
+# barplot(t(as.matrix(cibersort_150_wt)),ylab = "Fraction",names.arg = rep(x = "",nrow(cibersort_150_wt)),col = rev(brewer.pal(6,"Set1")),las = 1)
+# title(xlab = "150 dpi WT bulk samples",mgp = c(0.5,0,0))
+# legend(x = "topright",legend = names(cibersort_150_wt),pch = 15,col = rev(brewer.pal(6,"Set1")),inset = c(-0.4,0))
+# dev.off()
 
 
 # Boxplots
@@ -75,17 +75,17 @@ axis(side = 2,at = seq(0,6)+0.5,labels = F,lwd = 0.5)
 axis(side = 2,at = seq(1,6),labels = rev(c("OPC","Astrocyte","Neuron","oligodendrocyte","Endothelial","Microglia")),las = 1,tick = F,lwd = 0.5,par(mgp = c(0,0.2,0)))
 dev.off()
 
-pdf(file = "./plots/cibersort_bulk150_boxplot8.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,version = "2.0",family = "ArialMT")
-par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
+pdf(file = "./plots/cibersort_bulk150_Figure2C.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
+par(mai = c(0.5,0.8,0,0),mgp = c(1.6,0.6,0))
 graphics::plot(x = c(),y = c(),
-               xlim = c(0,0.8),
+               xlim = c(0,80),
                ylim = c(0.5,6.5),
                xlab = "Relative proportion",
                ylab = NA,
                xaxs = "i",
                yaxs = "i",
                axes = F)
-graphics::boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia"))],
+graphics::boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia"))] * 100,lty = 1,
                   ylim = c(0,0.8),
                   xaxs = "i",
                   yaxs = "i",
@@ -93,34 +93,10 @@ graphics::boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","E
                   axes = F,
                   lwd = 0.5/0.75,
                   add = T)
-axis(side = 1,las = 1,lwd = 0.5/0.75)
-axis(side = 2,las = 1,lwd = NA,at = 1:6,labels = rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia")),par(mgp = c(0,0.125,0)))
+axis(side = 1,las = 1,lwd = 0.5/0.75,at = seq(0,80,20),labels = c(0,20,40,60,"80%"))
+axis(side = 2,las = 1,lwd = NA,at = 1:6,labels = rev(c("OPC","Astrocyte","Neuron","Myelinating\noligodendrocyte","Endothelial","Microglia")),par(mgp = c(0,0.125,0)))
 axis(side = 2,las = 1,lwd = 0.5/0.75,at = 0:6 + 0.5,labels = NA)
 dev.off()
-
-cairo_pdf(filename = "./plots/cibersort_bulk150_boxplot_cairo.pdf",width = 2.25,height = 2.25,pointsize = 7,family = "Arial",)
-par(mai = c(0.5,0.5,0,0),mgp = c(1.6,0.6,0))
-graphics::plot(x = c(0,1),y = c(0,1),
-               xlim = c(0,0.8),
-               ylim = c(0.5,6.5),
-               xlab = "Relative proportion",
-               ylab = NA,
-               xaxs = "i",
-               yaxs = "i",
-               axes = F)
-graphics::boxplot(x = cibersort_150_wt[,rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia"))],
-                  ylim = c(0,0.8),
-                  xaxs = "i",
-                  yaxs = "i",
-                  horizontal = TRUE,
-                  axes = F,
-                  lwd = 0.5,
-                  add = T)
-axis(side = 1,las = 1,lwd = 0.5)
-axis(side = 2,las = 1,lwd = NA,at = 1:6,labels = rev(c("OPC","Astrocyte","Neuron","MO","Endothelial","Microglia")),par(mgp = c(0,0.15,0)))
-axis(side = 2,las = 1,lwd = 0.5,at = 0:6 + 0.5,labels = NA)
-dev.off()
-
 
 
 
