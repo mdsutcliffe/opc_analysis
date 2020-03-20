@@ -44,9 +44,9 @@ set.seed(0)
 embedding_umap <- uwot::umap(X = t(umap_all_scale),n_neighbors = 20)
 
 # Gather information for markers and colors
-umap_all.info <- c(paste0("bulk",bulk$info$day,"_",bulk$info$genotype),rep("opc12",count(opc12$info$type == "ten-cell")),rep("opc90",count(opc90$info$type == "ten-cell")))
+umap_all.info <- c(paste0("bulk",bulk$info$day,"_",bulk$info$genotype),rep("opc12",sum(opc12$info$type == "ten-cell")),rep("opc90",sum(opc90$info$type == "ten-cell")))
 pch_umap <- c(16,1,17,2,15,0,16,16)[as.numeric(factor(umap_all.info))]
-col_umap <- c(rep("#000000",6),"#377eb8","#e41a1c")[as.numeric(factor(umap_all.info))]
+col_umap <- c(rep("#000000",6),"#5e3c99","#e66101")[as.numeric(factor(umap_all.info))]
 
 # Plot UMAP of all datasets
 pdf(file = "./plots/UMAP_DEGs_and_RHEGs.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F)
@@ -67,22 +67,21 @@ axis(side = 1,lwd = 0.5,las = 1)
 axis(side = 2,lwd = 0.5,las = 1)
 legend(x = "topright",legend = c("bulk12-WT","bulk90-WT","bulk150-WT","bulk12-CKO","bulk90-CKO","bulk150-CKO","10c-12","10c-90"),
        pch = c(1,0,2,16,15,17,16,16),
-       col = c(rep("#000000",6),"#377eb8","#e41a1c"),
+       col = c(rep("#000000",6),"#5e3c99","#e66101"),
        pt.lwd = 0.5,
        box.lwd = 0.5,
        cex = 0.5)
 dev.off()
 
-# Gather information for markers and colors when plotting individually
-pch_umap_split <- c(16,1,16,1,16,1,16,16)[as.numeric(factor(umap_all.info))]
-col_umap_split <- c(rep("#000000",6),"#000000","#000000")[as.numeric(factor(umap_all.info))]
+pch_umap <- c(16,1,16,1,16,1,16,16)[as.numeric(factor(umap_all.info))]
+col_umap <- c(rep("#000000",6),"#5e3c99","#e66101")[as.numeric(factor(umap_all.info))]
 
 # Plot bulk150
 pdf(file = "./plots/UMAP_DEGs_and_RHEGs_bulk150.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
 plot(x = embedding_umap[grepl("bulk150",umap_all.info),],
-     pch = pch_umap_split[grepl("bulk150",umap_all.info)],
-     col = col_umap_split[grepl("bulk150",umap_all.info)],
+     pch = pch_umap[grepl("bulk150",umap_all.info)],
+     col = col_umap[grepl("bulk150",umap_all.info)],
      lwd = 0.5/0.75,
      cex = 0.75,
      xlim = c(-3,3),
@@ -107,8 +106,8 @@ dev.off()
 pdf(file = "./plots/UMAP_DEGs_and_RHEGs_bulk12.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
 plot(x = embedding_umap[grepl("bulk12",umap_all.info),],
-     pch = pch_umap_split[grepl("bulk12",umap_all.info)],
-     col = col_umap_split[grepl("bulk12",umap_all.info)],
+     pch = pch_umap[grepl("bulk12",umap_all.info)],
+     col = col_umap[grepl("bulk12",umap_all.info)],
      lwd = 0.5/0.75,
      cex = 0.75,
      xlim = c(-3,3),
@@ -135,8 +134,8 @@ cluster90 <- kmeans(x = embedding_umap[umap_all.info == "bulk90_CKO",],centers =
 pdf(file = "./plots/UMAP_DEGs_and_RHEGs_bulk90.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
 plot(x = embedding_umap[grepl("bulk90",umap_all.info),],
-     pch = pch_umap_split[grepl("bulk90",umap_all.info)],
-     col = col_umap_split[grepl("bulk90",umap_all.info)],
+     pch = pch_umap[grepl("bulk90",umap_all.info)],
+     col = col_umap[grepl("bulk90",umap_all.info)],
      lwd = 0.5/0.75,
      cex = 0.75,
      xlim = c(-3,3),
@@ -159,12 +158,6 @@ lines(x = c(median(embedding_umap[umap_all.info == "bulk90_WT",1]),median(embedd
 text(x = c(-1,2,-1),y = c(-1.5,-0.25,1),labels = c("Control","N1P","N1P"),cex = 6/7)
 dev.off()
 
-# Gather information for markers and colors when plotting individually
-# pch_umap_10c <- c(16,1,16,1,16,1,1,16)[as.numeric(factor(umap_all.info))]
-pch_umap_10c <- c(16,1,16,1,16,1,16,16)[as.numeric(factor(umap_all.info))]
-# col_umap_10c <- c(rep("#000000",6),"#000000","#000000")[as.numeric(factor(umap_all.info))]
-col_umap_10c <- c(rep("#000000",6),"#66a61e","#d95f02")[as.numeric(factor(umap_all.info))]
-
 library(e1071)
 dat <- data.frame(embedding_umap[grepl("opc",umap_all.info),],y = factor(c(rep("12 dpi",56),rep("90 dpi",56))))
 svmfit <- svm(y ~ .,data = dat,kernel = "linear",scale = F)
@@ -175,8 +168,8 @@ beta0 = svmfit$rho
 pdf(file = "./plots/UMAP_DEGs_and_RHEGs_10c.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
 plot(x = embedding_umap[grepl("opc",umap_all.info),],
-     pch = pch_umap_10c[grepl("opc",umap_all.info)],
-     col = col_umap_10c[grepl("opc",umap_all.info)],
+     pch = pch_umap[grepl("opc",umap_all.info)],
+     col = col_umap[grepl("opc",umap_all.info)],
      lwd = 0.5/0.75,
      cex = 0.75,
      xlim = c(-3,3),
@@ -199,8 +192,8 @@ dev.off()
 pdf(file = "./plots/UMAP_DEGs_and_RHEGs_12_panelE.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
 plot(x = embedding_umap[grepl("bulk12",umap_all.info) | grepl("opc12",umap_all.info),],
-     pch = pch_umap_10c[grepl("bulk12",umap_all.info) | grepl("opc12",umap_all.info)],
-     col = col_umap_10c[grepl("bulk12",umap_all.info) | grepl("opc12",umap_all.info)],
+     pch = pch_umap[grepl("bulk12",umap_all.info) | grepl("opc12",umap_all.info)],
+     col = col_umap[grepl("bulk12",umap_all.info) | grepl("opc12",umap_all.info)],
      lwd = 0.5/0.75,
      cex = 0.75,
      xlim = c(-3,3),
@@ -223,8 +216,8 @@ dev.off()
 pdf(file = "./plots/UMAP_DEGs_and_RHEGs_90_panelF.pdf",width = 1.5625,height = 1.5625,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.25,0.25,0.05,0.05),mgp = c(1.25,0.5,0))
 plot(x = embedding_umap[grepl("bulk90",umap_all.info) | grepl("opc90",umap_all.info),],
-     pch = pch_umap_10c[grepl("bulk90",umap_all.info) | grepl("opc90",umap_all.info)],
-     col = col_umap_10c[grepl("bulk90",umap_all.info) | grepl("opc90",umap_all.info)],
+     pch = pch_umap[grepl("bulk90",umap_all.info) | grepl("opc90",umap_all.info)],
+     col = col_umap[grepl("bulk90",umap_all.info) | grepl("opc90",umap_all.info)],
      lwd = 0.5/0.75,
      cex = 0.75,
      xlim = c(-3,3),

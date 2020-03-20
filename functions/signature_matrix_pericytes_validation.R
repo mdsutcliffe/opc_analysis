@@ -5,8 +5,7 @@ source("./opcBulk/import_opcBulk.R")
 
 signature <- signatureMatrix(geneList = bulk$tpm$symbol)
 
-write.table(x = signature$tpm,file = "./temp/mixture_signature_pericytes.txt",quote = F,sep = "\t",row.names = F)
-write.table(x = signature$matrix,file = "./temp/signature_matrix_pericytes.txt",quote = F,sep = "\t",row.names = F)
+write.table(x = signature$matrix,file = "./Figure S3/signature_pericytes.txt",quote = F,sep = "\t",row.names = F)
 
 # Run cibersort, get results, and place in external folder
 

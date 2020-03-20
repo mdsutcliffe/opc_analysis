@@ -3,7 +3,7 @@ library(tidyverse)
 library(readxl)
 
 # Cibersort signature matrix
-signatureMatrix <- function(geneList = NULL,nGenesEach = 40,removeType = c("WC","NFO"),oligoIndependence = TRUE) {
+signatureMatrix <- function(geneList = NULL,nGenesEach = 40,removeWholeCortex = TRUE,removeNFO = TRUE,oligoIndependence = TRUE) {
   load("./build/annotables_mouse.RData")
   
   f.barres <- list.files(path = "./external/GSE52564_RAW",full.names = T)
@@ -14,6 +14,23 @@ signatureMatrix <- function(geneList = NULL,nGenesEach = 40,removeType = c("WC",
   sig <- read_xls(path = f.barres[1])[,1]
   names(sig)[1] <- "symbol"
   sig_samples <- do.call(cbind,sapply(X = 1:length(f.barres),FUN = function(i) read_xls(path = f.barres[i])[,2]))
+  
+  # Get signature names
+  f.barres_base_cut <- sapply(X = 1:length(f.barres_base),FUN = function(i) strsplit(x = f.barres_base[i],split = "[_.]")[[1]][2])
+  sig <- cbind(sig,sig_samples)
+  names(sig)[2:ncol(sig)] <- f.barres_base_cut
+  
+  # Remove whole cortex
+  if (removeWholeCortex) {
+    sig <- sig[,1:15]
+    f.barres_base_cut <- f.barres_base_cut[1:14]
+  }
+  
+  # Remove NFO
+  if (removeNFO) {
+    sig <- sig[,-c(7,8)]
+    f.barres_base_cut <- f.barres_base_cut[-c(7,8)]
+  }
   
   sig_pericyte <- read.table(file = f.pericyte[1],header = T,sep = "\t",stringsAsFactors = F)[,1]
   sig_pericyte_samples <- do.call(cbind,sapply(X = 1:length(f.pericyte),FUN = function(i) read.table(file = f.pericyte[i],header = T,sep = "\t")[,2,drop = F]))
@@ -28,16 +45,12 @@ signatureMatrix <- function(geneList = NULL,nGenesEach = 40,removeType = c("WC",
   names(sig_pericyte)[grepl("Mural",names(sig_pericyte))] <- paste0("Mural",1:sum(grepl("Mural",names(sig_pericyte))))
   sig_pericyte <- cbind(sig_pericyte[,"symbol",drop = F],sig_pericyte[,which(grepl("Mural",names(sig_pericyte)))])
   
-  # Get signature names
-  f.barres_base_cut <- sapply(X = 1:length(f.barres_base),FUN = function(i) strsplit(x = f.barres_base[i],split = "[_.]")[[1]][2])
-  sig <- cbind(sig,sig_samples)
-  names(sig)[2:ncol(sig)] <- f.barres_base_cut
-  
   # Merge pericytes
   sig <- merge(sig,sig_pericyte,by = "symbol")
   
   # Average replicates
   cell_types <- sapply(X = names(sig)[2:ncol(sig)],FUN = function(x) substr(x = x,start = 1,stop = nchar(x)-1),USE.NAMES = F)
+  cell_types[cell_types == "NFO"] <- "OPC"
   cell_types <- factor(cell_types)
   sig_avg <- cbind(sig[,1,drop = F],do.call(cbind,lapply(X = 1:length(levels(cell_types)),FUN = function(i) rowMeans(sig[,1 + which(cell_types == levels(cell_types)[i])]))))
   names(sig_avg)[2:ncol(sig_avg)] <- levels(cell_types)

@@ -176,3 +176,12 @@ pheatmap(mat = agglomerate_pc_hm[,ncol(agglomerate_pc_hm):1],
          show_rownames = F,show_colnames = F,
          main = "12 dpi - 700-1k cell simulations")
 dev.off()
+
+
+# THIS ONE
+hist(opc12_projection1[opc12$info$type == "ten-cell"],breaks = seq(-30,30,length.out = 23),col = "#bdbdbd")
+
+hist(opc12_projection1[opc12$info$type == "ten-cell"],breaks = seq(-30,30,2.25)-0.25,col = "#bdbdbd")
+
+library(mixtools)
+pc1.k2 <- normalmixEM(x = opc12_projection1,k = 2)
