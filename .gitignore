@@ -5,3 +5,5 @@
 /build/
 /external/
 .Rproj.user
+/*/*.ai
+/*/*.png
