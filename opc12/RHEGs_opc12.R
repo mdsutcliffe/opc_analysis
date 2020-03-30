@@ -25,18 +25,17 @@ opc12_rheg_mat <- as.matrix(opc12_rheg_mat)
 # opc12_phm_annotation <- data.frame(row.names = colnames(opc12_rheg_mat),
 #                                    sex = opc12$info$sex[opc12$info$type == "ten-cell"])
 # 
-# pdf(file = "./plots/RHEG_heatmap_opc12.pdf",width = 8,height = 8)
+# pdf(file = "./plots/RHEG_heatmap_opc12.pdf",width = 12,height = 6*138/72+1,family = "ArialMT")
 # pheatmap(mat = opc12_rheg_mat,
 #          color = rev(brewer.pal(11,"RdBu")),
-#          breaks = seq(-4,4,length.out = 12),
+#          breaks = seq(-4,4,length.out = 12),cellwidth = 12,cellheight = 6,
 #          border_color = NA,
 #          clustering_method = "ward.D2",
-#          show_rownames = F,
-#          annotation_col = opc12_phm_annotation,
+#          fontsize = 6,
 #          scale = "row",
 #          labels_col = rep(x = "    ",ncol(opc12_rheg_mat)))
-# grid.text(label = "10-cell samples",y = 0.02)
-# grid.text(label = paste(nrow(opc12_rheg_mat),"RHEGs"),x = 0.875,rot = 90)
+# grid.text(label = "10-cell samples",y = 0.01)
+# # grid.text(label = paste(nrow(opc12_rheg_mat),"RHEGs"),x = 0.925,rot = 90)
 # dev.off()
 # 
 # pdf(file = "./plots/RHEG_heatmap_opc12_inspect.pdf",width = 20,height = 28)

@@ -126,3 +126,19 @@ axis(side = 2,at = 0.5:8.5,labels = NA,lwd = 0.5/0.75)
 axis(side = 2,at = 1:8,labels = rep(x = rev(c("O-E-N","U")),4),tick = F,las = 1,mgp = c(0,0.5,0))
 text(x = rep(9.5,4),y = seq(1.5,7.5,2),labels = rev(goi),adj = c(0,0.5),col = rev(brewer.pal(n = 4,name = "Dark2")))
 dev.off()
+
+pheatmap(opc90)
+expr <-apply(X = opc90$log2[match(degenes,opc90$log2$symbol),((10+40):ncol(opc90$log2))[a_other$group %in% c("U","other")]],MARGIN = 1,FUN = function(x) c(x[deseq_info$group == "other"],x[deseq_info$group == "U"]))
+df <- data.frame(row.names = names(opc90$info$log2[,9+which(opc90$info$type == "ten-cell")])= rep(violin_groups,times = rep(c(sum(a_other$group == "other"),sum(a_other$group == "U")),4)),
+                 y = c(as.numeric(c(expr[,1],expr[,2],expr[,3],expr[,4]))),
+                 stringsAsFactors = F)
+df$x <- factor(df$x,levels = rev(unique(df$x)))
+
+pdf(file = "~/ugroup_de.pdf",width = 6,height = 7)
+pheatmap(mat = cbind(data.frame(row.names = opc90$log2$symbol[opc90$log2$symbol %in% degenes]),opc90$log2[opc90$log2$symbol %in% degenes,9+40+which(a_other$group %in% c("U","other"))]),
+         color = rev(brewer.pal(n = 11,name = "RdBu")),breaks = seq(-4,4,length.out = 12),
+         scale = "row",show_rownames = F,show_colnames = F,
+         clustering_method = "ward.D2",
+         annotation = data.frame(row.names = row.names(a_other)[a_other$group %in% c("U","other")],
+                                 group = a_other$group[a_other$group %in% c("U","other")]))
+dev.off()

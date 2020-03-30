@@ -51,4 +51,18 @@ opc90_rheg_mat <- as.matrix(opc90_rheg_mat)
 #          labels_col = rep(x = "    ",ncol(opc90_rheg_mat)))
 # grid.text(label = "10-cell samples",y = 0.005)
 # dev.off()
-
+# 
+# 
+# pdf(file = "./plots/RHEG_heatmap_opc90.pdf",width = 12,height = 6*231/72+1,family = "ArialMT")
+# pheatmap(mat = opc90_rheg_mat,
+#          color = rev(brewer.pal(11,"RdBu")),
+#          breaks = seq(-4,4,length.out = 12),cellwidth = 12,cellheight = 6,
+#          border_color = NA,
+#          clustering_method = "ward.D2",
+#          fontsize = 6,
+#          scale = "row",
+#          labels_col = rep(x = "    ",ncol(opc90_rheg_mat)))
+# grid.text(label = "10-cell samples",y = 0.01,just = c("center","top"))
+# # grid.text(label = paste(nrow(opc90_rheg_mat),"RHEGs"),x = 0.925,rot = 90)
+# # grid.text(label = "Row z-score",x = 0.925,y = 0.9375,rot = 90)
+# dev.off()

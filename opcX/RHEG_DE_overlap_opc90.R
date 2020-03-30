@@ -28,3 +28,8 @@ b_only <- length(setdiff(bulk$deseq2$de90$genesDE,opc90_rheg))
 neither <- length(setdiff(common_genes,union(opc90_rheg,bulk$deseq2$de90$genesDE)))
 
 fisher.test(x = matrix(data = c(a_b,a_only,b_only,neither),nrow = 2,ncol = 2))
+
+binom.test(x = length(opc90_rheg),
+           n = nrow(bulk$rsem),
+           p = length(bulk$deseq2$de90$genesDE)/nrow(bulk$rsem),
+           alternative = "greater")

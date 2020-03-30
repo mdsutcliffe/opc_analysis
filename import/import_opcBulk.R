@@ -1,4 +1,5 @@
-# Pre-process OPC bulk data
+# Import bulk samples
+
 import_opcBulk <- function() {
   
   source("./functions/normalizeTPM.R")

@@ -298,9 +298,9 @@ msigdb_path <- list(output_dir = "./external/MSigDB",vs = "V7.0.1")
 hallmark <- msigdb_fetch(msigdb_path = msigdb_path,symbol = "H")
 
 enrich_up_12 <- hypeR(signature = (row.names(bulk$deseq2$de12$results)[!is.na(bulk$deseq2$de12$results$pvalue)])[fc_12 > 0 & p_12 < 0.05],
-                      gsets = hallmark,fdr_cutoff = 0.01,do_plots = T)
+                      gsets = hallmark,fdr_cutoff = 0.05,do_plots = T)
 enrich_down_12 <- hypeR(signature = (row.names(bulk$deseq2$de12$results)[!is.na(bulk$deseq2$de12$results$pvalue)])[fc_12 < 0 & p_12 < 0.05],
-                        gsets = hallmark,fdr_cutoff = 0.01,do_plots = T)
+                        gsets = hallmark,fdr_cutoff = 0.05,do_plots = T)
 # No enrichments
 
 enrich_up_90 <- hypeR(signature = (row.names(bulk$deseq2$de90$results)[!is.na(bulk$deseq2$de90$results$pvalue)])[fc_90 > 0 & p_90 < 0.05],
@@ -323,7 +323,7 @@ hyp_dots(enrich_12_down,top = 100)
 hyp_dots(enrich_12_up,top = 100)
 hyp_dots(enrich_90_down,top = 100)
 
-
+# THIS
 enrich_12_up <- hypeR(signature = row.names(bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj) & bulk$deseq2$de12$results$padj < 0.05 & bulk$deseq2$de12$results$log2FoldChange > 0,]),
                       gsets = hallmark,bg = sum(rowSums(bulk$rsem[,9+which(bulk$info$day == 12)] > 0) > 0),
                       fdr_cutoff = 0.01)

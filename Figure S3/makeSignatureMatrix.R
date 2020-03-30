@@ -100,7 +100,7 @@ names(cibersort_signature)[names(cibersort_signature) == "MO"] <- "Myelinating\n
 
 cibersort_bulk150 <- cibersort_signature[c(bulk$info$day == 150 & bulk$info$genotype == "WT",rep(FALSE,96*2)),]
 
-pdf(file = "./plots/figure_s3c.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
+pdf(file = "./plots/figure_s3c.pdf",width = 2.25,height = 1.75,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.5,0.6,0,0),mgp = c(1.6,0.6,0))
 graphics::plot(x = NULL,y = NULL,
                xlim = c(0,80),
@@ -126,7 +126,7 @@ dev.off()
 
 cibersort_bulk12 <- cibersort_signature[c(bulk$info$day == 12 & bulk$info$genotype == "WT",rep(FALSE,96*2)),]
 
-pdf(file = "./plots/figure_s3e.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
+pdf(file = "./plots/figure_s3e.pdf",width = 2.25,height = 1.75,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.5,0.6,0,0),mgp = c(1.6,0.6,0))
 graphics::plot(x = NULL,y = NULL,
                xlim = c(0,80),
@@ -137,6 +137,32 @@ graphics::plot(x = NULL,y = NULL,
                yaxs = "i",
                axes = F)
 graphics::boxplot(x = cibersort_bulk12[,rev(c("OPC","Astrocyte","Neuron","Myelinating\noligodendrocyte","Endothelial","Microglia"))] * 100,lty = 1,
+                  ylim = c(0,0.8),
+                  xaxs = "i",
+                  yaxs = "i",
+                  horizontal = TRUE,
+                  axes = F,
+                  lty = 1,
+                  lwd = 0.5/0.75,
+                  add = T)
+axis(side = 1,las = 1,lwd = 0.5/0.75,at = seq(0,80,20),labels = c(0,20,40,60,"80%"))
+axis(side = 2,las = 1,lwd = NA,at = 1:6,labels = rev(c("OPC","Astrocyte","Neuron","Myelinating\noligodendrocyte","Endothelial","Microglia")),par(mgp = c(0,0.125,0)))
+axis(side = 2,las = 1,lwd = 0.5/0.75,at = 0:6 + 0.5,labels = NA)
+dev.off()
+
+cibersort_bulk90 <- cibersort_signature[c(bulk$info$day == 90 & bulk$info$genotype == "WT",rep(FALSE,96*2)),]
+
+pdf(file = "./plots/figure_s3g.pdf",width = 2.25,height = 1.75,pointsize = 7,useDingbats = F,family = "ArialMT")
+par(mai = c(0.5,0.6,0,0),mgp = c(1.6,0.6,0))
+graphics::plot(x = NULL,y = NULL,
+               xlim = c(0,80),
+               ylim = c(0.5,6.5),
+               xlab = "Relative proportion",
+               ylab = NA,
+               xaxs = "i",
+               yaxs = "i",
+               axes = F)
+graphics::boxplot(x = cibersort_bulk90[,rev(c("OPC","Astrocyte","Neuron","Myelinating\noligodendrocyte","Endothelial","Microglia"))] * 100,lty = 1,
                   ylim = c(0,0.8),
                   xaxs = "i",
                   yaxs = "i",
@@ -162,7 +188,7 @@ names(cibersort_signature)[names(cibersort_signature) == "MO"] <- "Myelinating\n
 
 cibersort_bulk150 <- cibersort_signature[c(bulk$info$day == 150 & bulk$info$genotype == "WT",rep(FALSE,96*2)),]
 
-pdf(file = "./plots/figure_s3d.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
+pdf(file = "./plots/figure_s3d.pdf",width = 2.25,height = 1.75,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.5,0.6,0,0),mgp = c(1.6,0.6,0))
 graphics::plot(x = NULL,y = NULL,
                xlim = c(0,80),
@@ -188,7 +214,7 @@ dev.off()
 
 cibersort_bulk12 <- cibersort_signature[c(bulk$info$day == 12 & bulk$info$genotype == "WT",rep(FALSE,96*2)),]
 
-pdf(file = "./plots/figure_s3f.pdf",width = 2.25,height = 2.25,pointsize = 7,useDingbats = F,family = "ArialMT")
+pdf(file = "./plots/figure_s3f.pdf",width = 2.25,height = 1.75,pointsize = 7,useDingbats = F,family = "ArialMT")
 par(mai = c(0.5,0.6,0,0),mgp = c(1.6,0.6,0))
 graphics::plot(x = NULL,y = NULL,
                xlim = c(0,80),
@@ -199,6 +225,32 @@ graphics::plot(x = NULL,y = NULL,
                yaxs = "i",
                axes = F)
 graphics::boxplot(x = cibersort_bulk12[,rev(c("OPC","Astrocyte","Neuron","Myelinating\noligodendrocyte","Pericyte","Microglia"))] * 100,lty = 1,
+                  ylim = c(0,0.8),
+                  xaxs = "i",
+                  yaxs = "i",
+                  horizontal = TRUE,
+                  axes = F,
+                  lty = 1,
+                  lwd = 0.5/0.75,
+                  add = T)
+axis(side = 1,las = 1,lwd = 0.5/0.75,at = seq(0,80,20),labels = c(0,20,40,60,"80%"))
+axis(side = 2,las = 1,lwd = NA,at = 1:6,labels = rev(c("OPC","Astrocyte","Neuron","Myelinating\noligodendrocyte","Pericyte","Microglia")),par(mgp = c(0,0.125,0)))
+axis(side = 2,las = 1,lwd = 0.5/0.75,at = 0:6 + 0.5,labels = NA)
+dev.off()
+
+cibersort_bulk90 <- cibersort_signature[c(bulk$info$day == 90 & bulk$info$genotype == "WT",rep(FALSE,96*2)),]
+
+pdf(file = "./plots/figure_s3h.pdf",width = 2.25,height = 1.75,pointsize = 7,useDingbats = F,family = "ArialMT")
+par(mai = c(0.5,0.6,0,0),mgp = c(1.6,0.6,0))
+graphics::plot(x = NULL,y = NULL,
+               xlim = c(0,80),
+               ylim = c(0.5,6.5),
+               xlab = "Relative proportion",
+               ylab = NA,
+               xaxs = "i",
+               yaxs = "i",
+               axes = F)
+graphics::boxplot(x = cibersort_bulk90[,rev(c("OPC","Astrocyte","Neuron","Myelinating\noligodendrocyte","Pericyte","Microglia"))] * 100,lty = 1,
                   ylim = c(0,0.8),
                   xaxs = "i",
                   yaxs = "i",

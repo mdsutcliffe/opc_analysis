@@ -70,3 +70,22 @@ axis(side = 1,lwd = 0.5)
 axis(side = 2,las = 2,lwd = 0.5)
 dev.off()
 
+# How many cells in the correlation plot?
+i <- iMedian + 1
+bulk.info[bulk.info$name %in% names(bulk_log2)[c(seq(1,14,2)[i],seq(1,14,2)[i]+1)],]
+
+pdf(file = "plots/linear_amplification_reproducibility_correlation_figure_s2b.pdf",width = 1.953125,height = 3.125,pointsize = 7,family = "ArialMT")
+par(mai = c(0.5,0.5,0,0),mgp = c(2.3,0.8,0))
+plot(x = NULL,y = NULL,
+     xlim = c(0.4,2.6),ylim = c(-0.2,1),
+     xaxs = "i",yaxs = "i",
+     axes = F,
+     xlab = NA,ylab = "Pearrson correlation, R")
+graphics::boxplot(x = cbind(random_cor,bulk_cor),
+                  xaxs = "i",yaxs = "i",
+                  axes = F,
+                  lwd = 0.5/0.75,
+                  add = T)
+axis(side = 1,at = 0:3,labels = c(NA,"Randomized","Tumor\nreplicates",NA),padj = 1,lwd = 0.5/0.75)
+axis(side = 2,las = 1,lwd = 0.5/0.75)
+dev.off()
