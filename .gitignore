@@ -5,6 +5,4 @@
 /build/
 /external/
 .Rproj.user
-/*/*.ai
-/*/*.png
-/*/*.pdf
+/archive/
