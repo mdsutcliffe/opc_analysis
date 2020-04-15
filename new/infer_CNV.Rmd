@@ -1,0 +1,23 @@
+---
+title: "opc_inferCNV"
+output: html_document
+---
+
+## Import data
+
+```{r}
+setwd("~/Github/opc_analysis/")
+source("./import/import_opc12.R")
+source("./import/import_opc90.R")
+source("./import/import_opcBulk.R")
+
+tpm <- cbind(data.frame(row.names = bulk$tpm$symbol),
+             opc12$tpm[opc12$tpm$chr != "ERCC",9 + which(opc12$info$type == "ten-cell")],
+             opc90$tpm[opc90$tpm$chr != "ERCC",9 + which(opc90$info$type == "ten-cell")],
+             bulk$tpm[,10:ncol(bulk$tpm)])
+
+annotation <- cbind(names(tpm),
+                    c(rep(x = "opc12",times = 56),
+                      rep(x = "opc90",times = 56),
+                      paste0("bulk",bulk$info$day,bulk$info$genotype)))
+```
