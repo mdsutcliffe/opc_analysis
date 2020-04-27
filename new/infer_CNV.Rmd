@@ -3,10 +3,14 @@ title: "opc_inferCNV"
 output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "~/Github/opc_analysis/")
+```
+
 ## Import data
 
 ```{r}
-setwd("~/Github/opc_analysis/")
 source("./import/import_opc12.R")
 source("./import/import_opc90.R")
 source("./import/import_opcBulk.R")
@@ -20,4 +24,31 @@ annotation <- cbind(names(tpm),
                     c(rep(x = "opc12",times = 56),
                       rep(x = "opc90",times = 56),
                       paste0("bulk",bulk$info$day,bulk$info$genotype)))
+
+gene_order <- bulk$tpm[,c("symbol","chr","start","end")]
+
+
+write.table(x = tpm,file = "./new/inferCNV.tpm.matrix",quote = F,sep = "\t")
+write.table(x = annotation,file = "./new/inferCNV.annotation.txt",quote = F,sep = "\t",row.names = F,col.names = F)
+write.table(x = gene_order,file = "./new/inferCNV.gene_order.txt",quote = F,sep = "\t",row.names = F,col.names = F)
+```
+
+## Run inferCNV
+
+```{r}
+library(infercnv)
+
+# create the infercnv object
+infercnv_obj = CreateInfercnvObject(raw_counts_matrix="./new/inferCNV.tpm.matrix",
+                                    annotations_file="./new/inferCNV.annotation.txt",
+                                    delim="\t",
+                                    gene_order_file="./new/inferCNV.gene_order.txt",
+                                    ref_group_names=c("bulk12WT","bulk90WT","bulk150WT"))
+
+infercnv_obj = infercnv::run(infercnv_obj,
+                             cutoff=1, # cutoff=1 works well for Smart-seq2, and cutoff=0.1 works well for 10x Genomics
+                             out_dir=tempfile(), 
+                             cluster_by_groups=TRUE, 
+                             denoise=TRUE,
+                             HMM=TRUE)
 ```

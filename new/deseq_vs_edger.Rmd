@@ -1,0 +1,84 @@
+---
+title: "DESeq_vs_edgeR"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "~/Github/opc_analysis/")
+```
+
+## R Markdown
+The goal of this document is to compare DESeq2 results with edgeR results for the OPC manuscript.
+
+```{r}
+load("./build/opcBulk_DESeq2_results.RData")
+
+library(edgeR)
+
+# Get counts matrix and remove gene annotation
+row.names(bulk$rsem) <- bulk$rsem$symbol
+bulk$rsem <- bulk$rsem[,10:ncol(bulk$rsem)]
+
+# Convert all columns to factors
+bulk$info[,names(bulk$info)] <- lapply(bulk$info[,names(bulk$info)],factor)
+
+bulk$info$genotype <- relevel(x = bulk$info$genotype,ref = "WT")
+
+# For DESeq2 compatability
+row.names(bulk$info) <- bulk$info$name
+
+# DESeq2 requires integer counts
+bulk$rsem <- round(bulk$rsem)
+
+rsem <- bulk$rsem[,bulk$info$day == 150]
+info <- bulk$info[bulk$info$day == 150,"genotype"]
+names(info) <- names(rsem)
+rsem_filter <- rsem[rowSums(rsem[,info == "WT"]) > 0 & rowSums(rsem[,info == "CKO"]) > 0,]
+
+d <- edgeR::DGEList(counts = rsem_filter,group = info)
+# keep <- rowSums(cpm(d)>100) >= 2
+# d <- d[keep,]
+d$samples$lib.size <- colSums(d$counts)
+d <- calcNormFactors(d)
+d1 <- estimateCommonDisp(d)
+de1 <- edgeR::exactTest(d1)
+de1 <- decideTestsDGE(de1, adjust.method="BH", p.value=0.05)
+
+de_150 <- row.names(de1)[de1 != 0]
+
+
+rsem <- bulk$rsem[,bulk$info$day == 12]
+info <- bulk$info[bulk$info$day == 12,"genotype"]
+names(info) <- names(rsem)
+rsem_filter <- rsem[rowSums(rsem[,info == "WT"]) > 0 & rowSums(rsem[,info == "CKO"]) > 0,]
+
+d <- edgeR::DGEList(counts = rsem_filter,group = info)
+# keep <- rowSums(cpm(d)>100) >= 2
+# d <- d[keep,]
+d$samples$lib.size <- colSums(d$counts)
+d <- calcNormFactors(d)
+d1 <- estimateCommonDisp(d)
+de1 <- edgeR::exactTest(d1)
+de1 <- decideTestsDGE(de1, adjust.method="BH", p.value=0.05)
+
+de_12 <- row.names(de1)[de1 != 0]
+
+
+rsem <- bulk$rsem[,bulk$info$day == 90]
+info <- bulk$info[bulk$info$day == 90,"genotype"]
+names(info) <- names(rsem)
+rsem_filter <- rsem[rowSums(rsem[,info == "WT"]) > 0 & rowSums(rsem[,info == "CKO"]) > 0,]
+
+d <- edgeR::DGEList(counts = rsem_filter,group = info)
+# keep <- rowSums(cpm(d)>100) >= 2
+# d <- d[keep,]
+d$samples$lib.size <- colSums(d$counts)
+d <- calcNormFactors(d)
+d1 <- estimateCommonDisp(d)
+de1 <- edgeR::exactTest(d1)
+de1 <- decideTestsDGE(de1, adjust.method="BH", p.value=0.05)
+
+de_90 <- row.names(de1)[de1 != 0]
+
+```

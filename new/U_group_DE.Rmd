@@ -1,0 +1,111 @@
+---
+title: "U_group_DE"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(pheatmap)
+library(RColorBrewer)
+library(DESeq2)
+
+f <- "./figures/Figure 4/CIBERSORTx_opc90.txt"
+res <- read.table(file = f,header = T,sep = "\t",row.names = 1)
+
+res <- res[,1:(which(names(res) == "P.value") - 1)]
+
+p <- pheatmap(mat = res,
+              color = brewer.pal(9,"Reds"),
+              clustering_method = "ward.D2",
+              border_color = NA,
+              lwd = 0.5/0.75,
+              treeheight_row = 20,
+              treeheight_col = 10,
+              fontsize = 7,
+              show_rownames = F,
+              angle_col = 90,
+              silent = T)
+
+o_group <- unlist(as.dendrogram(p$tree_row)[[1]])
+n_group <- unlist(as.dendrogram(p$tree_row)[[2]][[1]])
+e_group <- c(unlist(as.dendrogram(p$tree_row)[[2]][[2]][[2]][[1]]),unlist(as.dendrogram(p$tree_row)[[2]][[2]][[2]][[2]][[1]]))
+u_group <- unlist(as.dendrogram(p$tree_row)[[2]][[2]][[2]][[2]][[2]][[2]])
+
+group <- rep("",56)
+group[c(o_group,e_group,n_group)]  <- "OEN"
+group[u_group] <- "U"
+
+annotation <- data.frame(row.names = row.names(res),
+                         group = group)
+
+
+source("./import/import_opc90.R")
+
+deseq_opc90 <- cbind(data.frame(row.names = opc90$rsem$symbol),opc90$rsem[,c(9+which(opc90$info$type == "ten-cell"))])
+deseq_opc90 <- deseq_opc90[rowSums(deseq_opc90) > 0,]
+deseq_opc90 <- deseq_opc90[,annotation$group %in% c("U","OEN")]
+deseq_info <- annotation[annotation$group %in% c("U","OEN"),,drop = F]
+deseq_info$group <- relevel(factor(deseq_info$group),ref = "OEN")
+
+deseq_opc90 <- round(deseq_opc90)
+deseq_opc90 <- as.matrix(deseq_opc90)
+mode(deseq_opc90) <- "integer"
+
+dds <- DESeqDataSetFromMatrix(countData = deseq_opc90,colData = deseq_info,design = ~group)
+dds <- DESeq(object = dds)
+
+res <- results(object = dds)
+resOrdered <- res[order(res$padj),]
+```
+
+```{r}
+
+load("./build/opcBulk_DESeq2_results.RData")
+
+length(bulk$deseq2$de150$genesDE)
+length(row.names(resOrdered[!is.na(resOrdered$padj) & resOrdered$padj < 0.05,]))
+
+intersect(row.names(resOrdered[!is.na(resOrdered$padj) & resOrdered$padj < 0.05,]),
+          bulk$deseq2$de150$genesDE)
+
+fList <- list.files(path = "./data/opc90_rdatafiles",full.names = T)
+arvListF <- list()
+arvListM <- list()
+for (i in 1:length(fList)) {
+  load(fList[i])
+  arvListF[[i]] <- resFemale$arv
+  arvListM[[i]] <- resMale$arv
+}
+gene_set_F <- table(unlist(sapply(1:100,function(x) arvListF[[x]]$symbol)))
+gene_set_M <- table(unlist(sapply(1:100,function(x) arvListM[[x]]$symbol)))
+gene_set_F <- names(gene_set_F)[gene_set_F == 100]
+gene_set_M <- names(gene_set_M)[gene_set_M == 100]
+
+gene_set_opc90 <- intersect(gene_set_F,gene_set_M)
+gene_set_opcBulk <- row.names(bulk$deseq2$de90$results[!is.na(bulk$deseq2$de90$results$padj),])
+
+common_genes <- intersect(gene_set_opc90,gene_set_opcBulk)
+
+a_b <- length(intersect(row.names(resOrdered[!is.na(resOrdered$padj) & resOrdered$padj < 0.05,]),bulk$deseq2$de150$genesDE))
+a_only <- length(setdiff(row.names(resOrdered[!is.na(resOrdered$padj) & resOrdered$padj < 0.05,]),bulk$deseq2$de150$genesDE))
+b_only <- length(setdiff(bulk$deseq2$de150$genesDE,row.names(resOrdered[!is.na(resOrdered$padj) & resOrdered$padj < 0.05,])))
+neither <- length(setdiff(common_genes,union(row.names(resOrdered[!is.na(resOrdered$padj) & resOrdered$padj < 0.05,]),bulk$deseq2$de150$genesDE)))
+
+fisher.test(x = matrix(data = c(a_b,a_only,b_only,neither),nrow = 2,ncol = 2))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
