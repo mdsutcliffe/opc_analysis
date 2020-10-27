@@ -33,6 +33,9 @@ text(x = 27.5,y = -15,labels = "Mesenchymal",cex = 6/7)
 dev.off()
 
 
+
+
+
 sc <- list()
 sc$rsem <- rsemcounts_opc_gse60361
 sc$tpm <- normalizeTPM(rsem = sc$rsem,index_counts = 10:ncol(sc$rsem))
@@ -96,6 +99,27 @@ text(x = -27.5,y = -15,labels = "Proneural",cex = 6/7)
 text(x = 27.5,y = -15,labels = "Mesenchymal",cex = 6/7)
 dev.off()
 
+pdf(file = "./figures/Figure S6/figure_s6f.pdf",width = 3.125,height = 3.125,bg = "white",pointsize = 7,useDingbats = F)
+par(mai = c(0.75,0.5,0.25,0.5),mgp = c(1.6,0.6,0),xpd = T,lwd = 0.5/0.75)
+plot(x = NA,y = NA,
+     xlim = c(-60,60),ylim = c(0,20),
+     xaxs = "i",yaxs = "i",
+     xlab = NA,ylab = "Frequency",main = "10c pools of GSE75330",font.main = 1,cex.main = 8/7,
+     axes = F)
+lines(x = c(0,0),y = c(0,(15/16)*20),lwd = 0.5/0.75)
+hist(x = tensc$pc$projection1,
+     breaks = seq(-90,90,length.out = 67),
+     col = "#969696",
+     border = NA,
+     add = T)
+axis(side = 1,at = seq(-60,60,20),labels = c(-60,NA,NA,0,NA,NA,60),lwd = 0.5/0.75,mgp = c(1.6,0.6,0))
+axis(side = 2,at = seq(0,20,by = 5),lwd = 0.5/0.75,mgp = c(1.6,0.6,0),las = 1)
+lines(x = c(-5.1,-52),y = rep(-1.25,2),lwd = 0.5/0.75)
+lines(x = c(5.1,52),y = rep(-1.25,2),lwd = 0.5/0.75)
+text(x = -27.5,y = -1.875,labels = "Proneural",cex = 6/7)
+text(x = 27.5,y = -1.875,labels = "Mesenchymal",cex = 6/7)
+dev.off()
+
 
 set.seed(0)
 tensc <- list()
@@ -129,4 +153,25 @@ lines(x = c(-5,-52),y = rep(-10.5,2))
 lines(x = c(5,52),y = rep(-10.5,2))
 text(x = -27.5,y = -15,labels = "Proneural",cex = 6/7)
 text(x = 27.5,y = -15,labels = "Mesenchymal",cex = 6/7)
+dev.off()
+
+pdf(file = "./figures/Figure S6/figure_s6d.pdf",width = 3.125,height = 3.125,bg = "white",pointsize = 7,useDingbats = F)
+par(mai = c(0.75,0.5,0.25,0.5),mgp = c(1.6,0.6,0),xpd = T,lwd = 0.5/0.75)
+plot(x = NA,y = NA,
+     xlim = c(-60,60),ylim = c(0,20),
+     xaxs = "i",yaxs = "i",
+     xlab = NA,ylab = "Frequency",main = "10c pools of GSE60361",font.main = 1,cex.main = 8/7,
+     axes = F)
+lines(x = c(0,0),y = c(0,(15/16)*20),lwd = 0.5/0.75)
+hist(x = tensc$pc$projection1,
+     breaks = seq(-90,90,length.out = 67),
+     col = "#969696",
+     border = NA,
+     add = T)
+axis(side = 1,at = seq(-60,60,20),labels = c(-60,NA,NA,0,NA,NA,60),lwd = 0.5/0.75,mgp = c(1.6,0.6,0))
+axis(side = 2,at = seq(0,20,by = 5),lwd = 0.5/0.75,mgp = c(1.6,0.6,0),las = 1)
+lines(x = c(-5.1,-52),y = rep(-1.25,2),lwd = 0.5/0.75)
+lines(x = c(5.1,52),y = rep(-1.25,2),lwd = 0.5/0.75)
+text(x = -27.5,y = -1.875,labels = "Proneural",cex = 6/7)
+text(x = 27.5,y = -1.875,labels = "Mesenchymal",cex = 6/7)
 dev.off()

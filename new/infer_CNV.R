@@ -63,8 +63,9 @@ phm_ann <- data.frame(row.names = annotation[,1],group = annotation[,2])
 head(phm_ann)
 range(as.numeric(infercnv_obj@expr.data))
 which(diff(as.numeric(phm_ann$group)) != 0)
-png(filename = "./new/cnvplot_bulkreference.png",width = 2000,height = 1500,res = 200)
-pheatmap(mat = t(infercnv_obj@expr.data[,!(annotation[,2] %in% c("opc12","opc90","SC"))]),cluster_cols = F,cluster_rows = F,show_colnames = F,show_rownames = F,color = brewer.pal(n = 3,name = "RdBu"),breaks = c(0,0.667,1.5,10),
+#png(filename = "./new/cnvplot_bulkreference.png",width = 2000,height = 1500,res = 200)
+pdf(file = "./new/cnvplot_bulkreference.pdf",width = 10,height = 8)
+pheatmap(mat = t(infercnv_obj@expr.data[,!(annotation[,2] %in% c("opc12","opc90","SC"))]),cluster_cols = F,cluster_rows = F,show_colnames = F,show_rownames = F,color = rev(brewer.pal(n = 3,name = "RdBu")),breaks = c(0,0.667,1.5,10),
          annotation_row = phm_ann[annotation[,2] != "SC",1,drop = F],annotation_col = infercnv_obj@gene_order[,1,drop = F],
          gaps_row = rep(x = which(diff(as.numeric(phm_ann$group[!(annotation[,2] %in% c("opc12","opc90","SC"))])) != 0),each = 2))
 dev.off()
