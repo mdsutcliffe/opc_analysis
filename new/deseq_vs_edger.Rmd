@@ -12,9 +12,10 @@ knitr::opts_knit$set(root.dir = "~/Github/opc_analysis/")
 The goal of this document is to compare DESeq2 results with edgeR results for the OPC manuscript.
 
 ```{r}
-load("./build/opcBulk_DESeq2_results.RData")
+# load("./build/opcBulk_DESeq2_results.RData")
 
 library(edgeR)
+source("./import/import_opcBulk.R")
 
 # Get counts matrix and remove gene annotation
 row.names(bulk$rsem) <- bulk$rsem$symbol
