@@ -158,3 +158,126 @@ lines(x = c(5,52),y = rep(-8.5,2),lwd = 0.5/0.75)
 text(x = -27.5,y = -12.75,labels = "Proneural",cex = 6/7)
 text(x = 27.5,y = -12.75,labels = "Mesenchymal",cex = 6/7)
 dev.off()
+
+
+
+
+# S6D-G
+source("./functions/normalizeTPM.R")
+source("./functions/pca_subtype.R")
+
+load("./external/gene_detection_rate_processed.RData")
+
+set.seed(0)
+tensc <- list()
+tensc$rsem <- rsemcounts_opc_gse75330[,1:9]
+for (i in 1:56) {
+  iCells <- sample(x = 10:ncol(rsemcounts_opc_gse75330),size = 10,replace = TRUE)
+  tensc$rsem <- cbind(tensc$rsem,rowSums(rsemcounts_opc_gse75330[,iCells]))
+}
+
+tensc$tpm <- normalizeTPM(rsem = tensc$rsem,index_counts = 10:ncol(tensc$rsem))
+
+tensc$pc <- pca_subtype(x = tensc)
+
+pdf(file = "./figures/Figure S6/figure_s6f.pdf",width = 2.75,height = 2.75,bg = "white",pointsize = 7,useDingbats = F)
+par(mai = c(0.75,0.5,0.25,0.5),mgp = c(1.6,0.6,0),xpd = T,lwd = 0.5/0.75)
+plot(x = NA,y = NA,
+     xlim = c(-60,60),ylim = c(0,20),
+     xaxs = "i",yaxs = "i",
+     xlab = NA,ylab = "Frequency",main = "10c pools of GSE75330",font.main = 1,cex.main = 8/7,
+     axes = F)
+lines(x = c(0,0),y = c(0,(15/16)*20),lwd = 0.5/0.75)
+hist(x = tensc$pc$projection1,
+     breaks = seq(-90,90,length.out = 67),
+     col = "#969696",
+     border = NA,
+     add = T)
+axis(side = 1,at = seq(-60,60,20),labels = c(-60,NA,NA,0,NA,NA,60),lwd = 0.5/0.75,mgp = c(1.6,0.6,0))
+axis(side = 2,at = seq(0,20,by = 5),lwd = 0.5/0.75,mgp = c(1.6,0.6,0),las = 1)
+lines(x = c(-5.1,-52),y = rep(-1.25,2),lwd = 0.5/0.75)
+lines(x = c(5.1,52),y = rep(-1.25,2),lwd = 0.5/0.75)
+text(x = -27.5,y = -1.875,labels = "Proneural",cex = 6/7)
+text(x = 27.5,y = -1.875,labels = "Mesenchymal",cex = 6/7)
+dev.off()
+
+
+set.seed(0)
+tensc <- list()
+tensc$rsem <- rsemcounts_opc_gse60361[,1:9]
+for (i in 1:56) {
+  iCells <- sample(x = 10:ncol(rsemcounts_opc_gse60361),size = 10,replace = TRUE)
+  tensc$rsem <- cbind(tensc$rsem,rowSums(rsemcounts_opc_gse60361[,iCells]))
+}
+
+tensc$tpm <- normalizeTPM(rsem = tensc$rsem,index_counts = 10:ncol(tensc$rsem))
+
+tensc$pc <- pca_subtype(x = tensc)
+
+
+pdf(file = "./figures/Figure S6/figure_s6d.pdf",width = 2.75,height = 2.75,bg = "white",pointsize = 7,useDingbats = F)
+par(mai = c(0.75,0.5,0.25,0.5),mgp = c(1.6,0.6,0),xpd = T,lwd = 0.5/0.75)
+plot(x = NA,y = NA,
+     xlim = c(-60,60),ylim = c(0,20),
+     xaxs = "i",yaxs = "i",
+     xlab = NA,ylab = "Frequency",main = "10c pools of GSE60361",font.main = 1,cex.main = 8/7,
+     axes = F)
+lines(x = c(0,0),y = c(0,(15/16)*20),lwd = 0.5/0.75)
+hist(x = tensc$pc$projection1,
+     breaks = seq(-90,90,length.out = 67),
+     col = "#969696",
+     border = NA,
+     add = T)
+axis(side = 1,at = seq(-60,60,20),labels = c(-60,NA,NA,0,NA,NA,60),lwd = 0.5/0.75,mgp = c(1.6,0.6,0))
+axis(side = 2,at = seq(0,20,by = 5),lwd = 0.5/0.75,mgp = c(1.6,0.6,0),las = 1)
+lines(x = c(-5.1,-52),y = rep(-1.25,2),lwd = 0.5/0.75)
+lines(x = c(5.1,52),y = rep(-1.25,2),lwd = 0.5/0.75)
+text(x = -27.5,y = -1.875,labels = "Proneural",cex = 6/7)
+text(x = 27.5,y = -1.875,labels = "Mesenchymal",cex = 6/7)
+dev.off()
+
+
+
+sc <- list()
+sc$rsem <- rsemcounts_opc_gse75330
+sc$tpm <- normalizeTPM(rsem = sc$rsem,index_counts = 10:ncol(sc$rsem))
+sc$pc <- pca_subtype(x = sc)
+
+pdf(file = "./figures/Figure S6/figure_s6g.pdf",width = 2.75,height = 2.75,bg = "white",pointsize = 7,useDingbats = F)
+par(mai = c(0.75,0.5,0.25,0.5),mgp = c(1.6,0.6,0),xpd = F,lwd = 0.5/0.75)
+plot(density(sc$pc$projection1,adjust=0.5),
+     xlim = c(-60,60),ylim = c(0,0.08),lwd = 2,
+     xaxs = "i",yaxs = "i",
+     xlab = NA,ylab = "Density",main = "GSE75330",font.main = 1,cex.main = 8/7,
+     axes = F)
+lines(x = c(0,0),y = c(0,(15/16)*0.08),lwd = 0.5/0.75)
+axis(side = 1,at = seq(-60,60,20),labels = c(-60,NA,NA,0,NA,NA,60),lwd = 0.5/0.75,mgp = c(1.6,0.6,0))
+axis(side = 2,at = seq(0,0.08,by = 0.02),lwd = 0.5/0.75,mgp = c(1.6,0.6,0),las = 1)
+par(xpd = T)
+lines(x = c(-5.1,-52),y = rep(-5e-3,2),lwd = 0.5/0.75)
+lines(x = c(5.1,52),y = rep(-5e-3,2),lwd = 0.5/0.75)
+text(x = -27.5,y = -0.0075,labels = "Proneural",cex = 6/7)
+text(x = 27.5,y = -0.0075,labels = "Mesenchymal",cex = 6/7)
+dev.off()
+
+sc <- list()
+sc$rsem <- rsemcounts_opc_gse60361
+sc$tpm <- normalizeTPM(rsem = sc$rsem,index_counts = 10:ncol(sc$rsem))
+sc$pc <- pca_subtype(x = sc)
+
+pdf(file = "./figures/Figure S6/figure_s6e.pdf",width = 2.75,height = 2.75,bg = "white",pointsize = 7,useDingbats = F)
+par(mai = c(0.75,0.5,0.25,0.5),mgp = c(1.6,0.6,0),xpd = F,lwd = 0.5/0.75)
+plot(density(sc$pc$projection1,adjust=0.5),
+     xlim = c(-60,60),ylim = c(0,0.08),lwd = 2,
+     xaxs = "i",yaxs = "i",
+     xlab = NA,ylab = "Density",main = "GSE60361",font.main = 1,cex.main = 8/7,
+     axes = F)
+lines(x = c(0,0),y = c(0,(15/16)*0.08),lwd = 0.5/0.75)
+axis(side = 1,at = seq(-60,60,20),labels = c(-60,NA,NA,0,NA,NA,60),lwd = 0.5/0.75,mgp = c(1.6,0.6,0))
+axis(side = 2,at = seq(0,0.08,by = 0.02),lwd = 0.5/0.75,mgp = c(1.6,0.6,0),las = 1)
+par(xpd = T)
+lines(x = c(-5.1,-52),y = rep(-5e-3,2),lwd = 0.5/0.75)
+lines(x = c(5.1,52),y = rep(-5e-3,2),lwd = 0.5/0.75)
+text(x = -27.5,y = -0.0075,labels = "Proneural",cex = 6/7)
+text(x = 27.5,y = -0.0075,labels = "Mesenchymal",cex = 6/7)
+dev.off()

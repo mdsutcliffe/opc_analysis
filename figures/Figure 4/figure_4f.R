@@ -4,7 +4,7 @@ library(pheatmap)
 library(RColorBrewer)
 library(DESeq2)
 
-f <- "./Figure 4/CIBERSORTx_opc90.txt"
+f <- "./figures/Figure 4/CIBERSORTx_opc90.txt"
 res <- read.table(file = f,header = T,sep = "\t",row.names = 1)
 
 res <- res[,1:(which(names(res) == "P.value") - 1)]

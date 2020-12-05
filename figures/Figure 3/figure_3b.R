@@ -5,12 +5,12 @@ load("./build/opcBulk_DESeq2_results.RData")
 
 de12 <- bulk$deseq2$de12$results[!is.na(bulk$deseq2$de12$results$padj),c("log2FoldChange","padj")]
 
-goi <- c("Robo3","Clspn","Mycn","Rpl30","Rpl34","Rpl36a","Rplp1","Rps13")
+goi <- c("Robo3","Clspn","Mycn","Rpl30","Rpl34","Rpl36a","Rplp1","Rps13","Tcf7l2")
 
 de12_goi <- de12[goi,]
 de12 <- de12[!(row.names(de12) %in% goi),]
 
-pdf(file = "./Figure 3/figure_3b.pdf",width = 3.125,height = 3.125,pointsize = 7,useDingbats = F,bg = "white")
+pdf(file = "./figures/Figure 3/figure_3b_revision.pdf",width = 2.75,height = 2.75,pointsize = 7,useDingbats = F,bg = "white")
 par(mai = c(0.75,0.5,0.25,0.5),mgp = c(1.6,0.6,0),xpd = T,lwd = 0.5/0.75)
 plot(x = de12$log2FoldChange[de12$padj >= 0.05],
      y = -log10(x = de12$padj[de12$padj >= 0.05]),
