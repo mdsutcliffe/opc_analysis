@@ -1,6 +1,13 @@
 # opc_analysis
 Janes Lab - mouse glioma analysis
 
+Code for publication:
+
+Premalignant Oligodendrocyte Precursor Cells Stall in a Heterogeneous State of Replication Stress Prior to Gliomagenesis
+Matthew D Sutcliffe, Rui P Galvao, Lixin Wang, Jungeun Kim, Lauren K Rosenfeld, Shambhavi Singh, Hui Zong, Kevin A Janes
+
+https://pubmed.ncbi.nlm.nih.gov/33531372/
+
 ---
 
 Top-level folder is the expected working directory for all scripts/functions.
